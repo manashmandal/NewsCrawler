@@ -1,3 +1,3 @@
 # TODO
-* Train `StanfordNERTagger` for custom locations
+* Train `StanfordNERTagger` for Bangladesh locations
 * Check for extra entity or reduce the number of entities

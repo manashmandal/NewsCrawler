@@ -77,6 +77,8 @@ def create_ner_entities_tuple_2(text):
 
 
 
+
+
 # Header
 _header = { 'User-agent': 'Mozilla/5.0' }
 
@@ -163,9 +165,9 @@ news_text = "Nearly 7,000 imported Infiniti and Nissan Fuga automobiles will be 
 news_text = "While in France, Christine Lagarde discussed 100% short-term stimulus efforts in a recent interview with the Wall Street Journal."
 
 # Sums up discrete tags
-def sum_same_tags(text):
-    tokenized_text = word_tokenize(text)
-    tagged_tokenized_text = st2.tag(tokenized_text)
+def entity_group(text):
+    entities = ['LOCATION', 'PERSON', 'PERCENT', 'DATE']
+    tagged_entities = st.tag(word_tokenize(text))
 
 
 
@@ -179,8 +181,40 @@ if __name__ == '__main__':
     ner_percent = []
     ner_time = []
 
-    print create_ner_entities_tuple_2(news_text)
-    print create_ner_entities_tuple(news_text)
+    # print create_ner_entities_tuple_2(news_text)
+    # print create_ner_entities_tuple(news_text)
+    #
+    # print st2.tag(word_tokenize(news_text))
+    # print st.tag(word_tokenize(news_text))
+    # entity_group(news_text)
 
-    print st2.tag(word_tokenize(news_text))
-    print st.tag(word_tokenize(news_text))
+    # tag_touple_list = []
+    test_token = [('Manash', 'PERSON'), ('Mandal', 'PERSON'), ('France', 'LOCATION'),('100', 'PERCENT'), ('%', 'PERCENT'), ('Kanak', 'PERSON'), ('Mazumder', 'PERSON'), ('Bangladesh', 'LOCATION')]
+
+    # Allocate size
+    # tag_touple_list = [(x, x) for x in range(len(test_token))]
+    tag_touple_list = [(1, 1)]
+
+    comparator = test_token[0]
+
+    list_index = 0
+
+    append_index = 0
+
+    tag_touple_list[list_index] = test_token[0]
+
+    list_index += 1
+
+    while (list_index < len(test_token)):
+        if (comparator[1] == test_token[list_index][1]):
+            to_be_appended = comparator[0]+ ' ' + test_token[list_index][0]
+            tag_touple_list[append_index] = (to_be_appended, comparator[1])
+            list_index += 1
+        else:
+            comparator = test_token[list_index]
+            tag_touple_list.append((comparator[0], comparator[1]))
+            list_index += 1
+            append_index += 1
+
+    print tag_touple_list
+

@@ -190,8 +190,8 @@ def entity_group(text):
             # If it's a Percentage symbol skip the space
             space_or_not = '' if tokenized_words[list_index][0] == '%' else ' '
 
-            # Get the previous element then append it with the new one
-            to_be_appended = comparator[0] + space_or_not + tokenized_words[list_index][0]
+            # which is to be appended
+            to_be_appended = tag_touple_list[append_index][0] + space_or_not + tokenized_words[list_index][0]
 
             # Set the modified value to the touple list
             tag_touple_list[append_index] = (to_be_appended, comparator[1])
@@ -199,9 +199,13 @@ def entity_group(text):
             # Increase list index
             list_index += 1
 
+            continue
+
         else:
             # Replace the comparator with new one
             comparator = tokenized_words[list_index]
+
+            # print "Comparator got changed: {0}".format(comparator)
 
             # Place the comparator to the list
             tag_touple_list.append((comparator[0], comparator[1]))
@@ -229,5 +233,11 @@ if __name__ == '__main__':
     ner_percent = []
     ner_time = []
 
+    # news_text = "While in France, John Cena Reese discussed 100% short-term stimulus efforts in a recent interview with the Wall Street Journal."
+    news_text = "Police in Singapore have detained a Hizb ut-Tahir member named Zulfikar Mohamad Shariff for spreading radical Islamist ideology online and radicalising at least two other citizens.The 44-year-old man was arrested in Singapore this month and ordered two years' detention, according to a statement from Singaporean Home Ministry on Friday."
 
+    # My algorithm
     entity_group(news_text)
+
+    # Algorithm from StackOverflow
+    print create_ner_entities_tuple(news_text)

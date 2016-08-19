@@ -16,7 +16,7 @@
   </component>
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/NewsParser$crawler_with_tagger.coverage" NAME="crawler_with_tagger Coverage Results" MODIFIED="1471638290388" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/crawler" />
+    <SUITE FILE_PATH="coverage/NewsParser$crawler_with_tagger.coverage" NAME="crawler_with_tagger Coverage Results" MODIFIED="1471639256030" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/crawler" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
@@ -30,8 +30,8 @@
       <file leaf-file-name="crawler_with_tagger.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/crawler/crawler_with_tagger.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="152">
-              <caret line="204" column="0" selection-start-line="204" selection-start-column="0" selection-end-line="204" selection-end-column="0" />
+            <state relative-caret-position="146">
+              <caret line="173" column="0" selection-start-line="173" selection-start-column="0" selection-end-line="175" selection-end-column="40" />
               <folding />
             </state>
           </provider>
@@ -139,6 +139,7 @@
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="js-jscs-nodeInterpreter" value="D:\nodejs\node.exe" />
   </component>
   <component name="RunManager" selected="Python.crawler_with_tagger">
     <configuration default="false" name="crawler_with_tagger" type="PythonConfigurationType" factoryName="Python" temporary="true">
@@ -435,8 +436,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/crawler/crawler_with_tagger.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="152">
-          <caret line="204" column="0" selection-start-line="204" selection-start-column="0" selection-end-line="204" selection-end-column="0" />
+        <state relative-caret-position="146">
+          <caret line="173" column="0" selection-start-line="173" selection-start-column="0" selection-end-line="175" selection-end-column="40" />
           <folding />
         </state>
       </provider>

@@ -166,8 +166,56 @@ news_text = "While in France, Christine Lagarde discussed 100% short-term stimul
 
 # Sums up discrete tags
 def entity_group(text):
-    entities = ['LOCATION', 'PERSON', 'PERCENT', 'DATE']
-    tagged_entities = st.tag(word_tokenize(text))
+    # Getting rid of tokens with Object Tag
+    tokenized_words = [token for token in st.tag(word_tokenize(text)) if token[1] != 'O']
+
+    comparator = tokenized_words[0]
+    list_index = 0
+    append_index = 0
+
+    # Store the element from the beginning of the list
+    comparator = tokenized_words[0]
+
+    # Insert first element to the tag_touple list
+    tag_touple_list = [(comparator[0], comparator[1])]
+
+    # Increase the list index since we've added an element at the beginning
+    list_index += 1
+
+    # Continue iteration until the index has reached to the end of the list
+    while (list_index < len(tokenized_words)):
+
+        if (comparator[1] == tokenized_words[list_index][1]):
+
+            # If it's a Percentage symbol skip the space
+            space_or_not = '' if tokenized_words[list_index][0] == '%' else ' '
+
+            # Get the previous element then append it with the new one
+            to_be_appended = comparator[0] + space_or_not + tokenized_words[list_index][0]
+
+            # Set the modified value to the touple list
+            tag_touple_list[append_index] = (to_be_appended, comparator[1])
+
+            # Increase list index
+            list_index += 1
+
+        else:
+            # Replace the comparator with new one
+            comparator = tokenized_words[list_index]
+
+            # Place the comparator to the list
+            tag_touple_list.append((comparator[0], comparator[1]))
+
+            # Increase index
+            list_index += 1
+
+            # Since it's a new entity we need to increase the location of the insertion
+            append_index += 1
+
+
+
+    print tag_touple_list
+
 
 
 
@@ -181,40 +229,5 @@ if __name__ == '__main__':
     ner_percent = []
     ner_time = []
 
-    # print create_ner_entities_tuple_2(news_text)
-    # print create_ner_entities_tuple(news_text)
-    #
-    # print st2.tag(word_tokenize(news_text))
-    # print st.tag(word_tokenize(news_text))
-    # entity_group(news_text)
 
-    # tag_touple_list = []
-    test_token = [('Manash', 'PERSON'), ('Mandal', 'PERSON'), ('France', 'LOCATION'),('100', 'PERCENT'), ('%', 'PERCENT'), ('Kanak', 'PERSON'), ('Mazumder', 'PERSON'), ('Bangladesh', 'LOCATION')]
-
-    # Allocate size
-    # tag_touple_list = [(x, x) for x in range(len(test_token))]
-    tag_touple_list = [(1, 1)]
-
-    comparator = test_token[0]
-
-    list_index = 0
-
-    append_index = 0
-
-    tag_touple_list[list_index] = test_token[0]
-
-    list_index += 1
-
-    while (list_index < len(test_token)):
-        if (comparator[1] == test_token[list_index][1]):
-            to_be_appended = comparator[0]+ ' ' + test_token[list_index][0]
-            tag_touple_list[append_index] = (to_be_appended, comparator[1])
-            list_index += 1
-        else:
-            comparator = test_token[list_index]
-            tag_touple_list.append((comparator[0], comparator[1]))
-            list_index += 1
-            append_index += 1
-
-    print tag_touple_list
-
+    entity_group(news_text)

@@ -165,9 +165,9 @@ news_text = "Nearly 7,000 imported Infiniti and Nissan Fuga automobiles will be 
 news_text = "While in France, Christine Lagarde discussed 100% short-term stimulus efforts in a recent interview with the Wall Street Journal."
 
 # Sums up discrete tags
-def entity_group(text):
+def entity_group(text, _classifier=st):
     # Getting rid of tokens with Object Tag
-    tokenized_words = [token for token in st.tag(word_tokenize(text)) if token[1] != 'O']
+    tokenized_words = [token for token in _classifier.tag(word_tokenize(text)) if token[1] != 'O']
 
     comparator = tokenized_words[0]
     list_index = 0
@@ -218,7 +218,7 @@ def entity_group(text):
 
 
 
-    print tag_touple_list
+    return set(tag_touple_list)
 
 
 
@@ -233,11 +233,11 @@ if __name__ == '__main__':
     ner_percent = []
     ner_time = []
 
-    # news_text = "While in France, John Cena Reese discussed 100% short-term stimulus efforts in a recent interview with the Wall Street Journal."
-    news_text = "Police in Singapore have detained a Hizb ut-Tahir member named Zulfikar Mohamad Shariff for spreading radical Islamist ideology online and radicalising at least two other citizens.The 44-year-old man was arrested in Singapore this month and ordered two years' detention, according to a statement from Singaporean Home Ministry on Friday."
+    news_text = "While in France, Jhon Reese discussed 100% short-term stimulus efforts in a recent interview with the Wall Street Journal."
+    # news_text = "Police in Singapore have detained a Hizb ut-Tahir member named Zulfikar Mohamad Shariff for spreading radical Islamist ideology online and radicalising at least two other citizens.The 44-year-old man was arrested in Singapore this month and ordered two years' detention, according to a statement from Singaporean Home Ministry on Friday."
 
     # My algorithm
-    entity_group(news_text)
+    print entity_group(news_text)
 
     # Algorithm from StackOverflow
     print create_ner_entities_tuple(news_text)

@@ -9,6 +9,7 @@ import urllib2
 import unicodedata
 from datetime import datetime
 import time
+import re
 
 # Header 
 _header = { 'User-agent': 'Mozilla/5.0' }
@@ -38,6 +39,9 @@ def get_news_category(news_url):
         cat += letter
     return cat.capitalize()
 
+# Insert space after delimiter
+def formatter(txt):
+    return re.sub('(?<=\.)(?=[a-zA-Z])', ' ', txt)
 
 def get_latest_news():
     # baseurl
@@ -76,16 +80,18 @@ def get_latest_news():
     news_reporter = first_news_soup.find('span', {'class' : 'author'}).get_text()
     news_scrape_time = get_current_time()
     news_category = get_news_category(first_news)
+
+    return news_title, formatter(news_text), news_update, news_reporter, news_scrape_time, news_category
     
-    print "News title: " +  first_news_soup.title.get_text()
-    print "Last Update: " + news_update
-    print "Reporter: "  + news_reporter
-    print "Category: " + news_category
-    print "\n\n"
-    print "Content: \n-----------------\n"
-    print news_text
-    print "--------------------------\n\n"
-    print "Scrape time: " + news_scrape_time
+    # print "News title: " +  first_news_soup.title.get_text()
+    # print "Last Update: " + news_update
+    # print "Reporter: "  + news_reporter
+    # print "Category: " + news_category
+    # print "\n\n"
+    # print "Content: \n-----------------\n"
+    # print news_text
+    # print "--------------------------\n\n"
+    # print "Scrape time: " + news_scrape_time
     
-if __name__ == '__main__':
-    get_latest_news()
+# if __name__ == '__main__':
+#     get_latest_news()

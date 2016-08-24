@@ -14,3 +14,5 @@ import re
 if __name__ == '__main__':
 	news_text = "While in France, Jhon Reese discussed 100% short-term stimulus efforts in a recent interview with the Wall Street Journal."
 	tagger = Tagger(stanford_classifier, stanford_ner_path)
+	print tagger.entity_group(news_text)
+

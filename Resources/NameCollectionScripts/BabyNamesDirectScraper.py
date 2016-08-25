@@ -1,7 +1,8 @@
 # Author: Manash
 # This piece of code collects names from http://www.babynamesdirect.com
 # Version: 0.01v
-# TODO: Add automatic scraping capability
+# TODO: i) Add automatic scraping capability
+# 	ii) Get all available page links
 
 
 from bs4 import BeautifulSoup

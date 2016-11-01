@@ -49,10 +49,41 @@ class ProthomaloSpider(scrapy.Spider):
     #     print News_Item['Content']
     #     return News_Item
 
+class ExperimentalSpider(scrapy.Spider):
+    name = 'alup'
+
+    def start_requests(self):
+        self.url = 'http://en.prothom-alo.com/bangladesh/news?page=1'
+        yield scrapy.Request(self.url, self.parse)
+
+    def parse(self, response):
+        self.logger.info("NOW ON PAGE: " + response.url)
+        self.baseurl = 'http://en.prothom-alo.com/bangladesh/'
+        self.main_selection = response.xpath("//div[@class='content_right']/h2[@class='title']/a")
+
+        for sel in self.main_selection:
+            urltoscrape = self.baseurl + sel.xpath("@href").extract()[0]
+            yield scrapy.Request(urltoscrape, callback=self.parseNews)
+
+        next_page = self.baseurl + response.xpath("//div[@class='pagination']/a[@class='next_page']/@href").extract()[0]
+
+        if next_page is not None:
+            yield scrapy.Request(next_page, callback=self.parse)
+
+
+    def parseNews(self, response):
+        self.logger.info("SCRAPING : " + response.url)
+
+
+
+
+
+
 class AluSpider(scrapy.Spider):
     name = 'alu'
 
     def start_requests(self):
+
         self.url = 'http://en.prothom-alo.com/bangladesh/news?page=1'
         yield scrapy.Request(self.url, self.parse)
 
@@ -80,6 +111,7 @@ class AluSpider(scrapy.Spider):
         self.logger.info("CALLBACK TIME")
         News_Item = response.meta['News_Item']
         News_Item = self.getNewsContent(News_Item, response)
+        News_Item = self.getNewsReporter(News_Item, response)
         #self.logger.info(self.getNewsContent(response))
         #self.logger.info("PRINTING NEWS: " + News_Item['Content'])
 
@@ -93,6 +125,9 @@ class AluSpider(scrapy.Spider):
         item['Content'] = content
         #return ''.join(text for text in response.xpath("//div[@itemprop='articleBody']//p/text()").extract())
         return item
+
+    def getNewsReporter(News_Item, response):
+        pass
 
 
 class QuotesSpider(scrapy.Spider):

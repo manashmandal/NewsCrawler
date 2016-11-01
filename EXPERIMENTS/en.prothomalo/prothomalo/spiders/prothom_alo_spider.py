@@ -65,7 +65,8 @@ class ProthomAloSpider(scrapy.Spider):
             'REPORTER' : news_item['reporter'],
             'LIKE_COUNT' : news_item['likes'],
             'CRAWL_DATE' : datetime.date.today(),
-            'NEWS_URL' : news_item['url']
+            'NEWS_URL' : news_item['url'],
+            'CATEGORY' : self.category
         }
 
     def getContent(self, news_item ,response):

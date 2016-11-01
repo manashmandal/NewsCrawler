@@ -61,27 +61,38 @@ class AluSpider(scrapy.Spider):
         self.main_selection = response.xpath("//div[@class='content_right']/h2[@class='title']/a")
 
         for sel in self.main_selection:
-
             #Adding extrac things
             News_Item = NewsItem()
             News_Item['NewsCategory'] = 'Bangladesh'
             News_Item['NewsTitle'] = sel.xpath("text()").extract()[0]
             News_Item['NewsURL'] = self.baseurl + sel.xpath("@href").extract()[0]
 
-            self.logger.info("TITLE: " + News_Item['NewsTitle'])
+            #self.logger.info("TITLE: " + News_Item['NewsTitle'])
 
             theurl = self.baseurl + sel.xpath("@href").extract()[0]
-            self.logger.info("URL : " + theurl)
+            #self.logger.info("URL : " + theurl)
             request = scrapy.Request(News_Item['NewsURL'], callback=self.parseNews)
             request.meta['News_Item'] = News_Item
             yield request
 
+
     def parseNews(self, response):
         self.logger.info("CALLBACK TIME")
+        News_Item = response.meta['News_Item']
+        News_Item = self.getNewsContent(News_Item, response)
         #self.logger.info(self.getNewsContent(response))
+        #self.logger.info("PRINTING NEWS: " + News_Item['Content'])
 
-    def getNewsContent(self, response):
-        return ''.join(text for text in response.xpath("//div[@itemprop='articleBody']//p/text()").extract())
+        yield {
+            'Title ' : News_Item['NewsTitle'],
+            'Content '  : News_Item['Content']
+        }
+
+    def getNewsContent(self, item ,response):
+        content = ''.join(text for text in response.xpath("//div[@itemprop='articleBody']//p/text()").extract())
+        item['Content'] = content
+        #return ''.join(text for text in response.xpath("//div[@itemprop='articleBody']//p/text()").extract())
+        return item
 
 
 class QuotesSpider(scrapy.Spider):

@@ -13,8 +13,10 @@ Then apply the following command to get the output as csv file
 
 `scrapy crawl prothomalo-bangladesh -o data.csv -t csv`
 
+![image](http://i.imgur.com/qScTmMQ.gif)
+
 ## Result
 
-A `data.csv` file should be created instantly and you can view the results after terminating the program. [Here is a sample of the output.]()
+A `data.csv` file should be created instantly and you can view the results after terminating the program. [Here is a sample of the output.](https://github.com/manashmndl/NewsCrawler/blob/master/EXPERIMENTS/en.prothomalo/Sample_Data/data.csv)
 
 

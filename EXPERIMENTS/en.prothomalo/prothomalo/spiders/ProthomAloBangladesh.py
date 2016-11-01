@@ -60,7 +60,7 @@ class ProthomAlo_Bangladesh(scrapy.Spider):
             'PUBLISHED' : news_item['published'],
             'CONTENT' : news_item['content'],
             'REPORTER' : news_item['reporter'],
-            'LIKE_COUNT' : news_item['likes']
+            'LIKE_COUNT' : news_item['likes'],
             'CRAWL_DATE' : datetime.date.today(),
             'NEWS_URL' : news_item['url']
         }

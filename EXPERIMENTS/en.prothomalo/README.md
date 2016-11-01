@@ -30,7 +30,7 @@ Change the parameter value of `category` for getting category wise news.
 To collect news which are tagged by `economoy` keyword, use the following command
 
 ```
-scrapy crawl prothomalo -a category=economy -o international_news.csv -t csv
+scrapy crawl prothomalo -a category=economy -o economy_news.csv -t csv
 ```
 
 

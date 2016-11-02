@@ -2,5 +2,5 @@
 
 ## Currently working on:
 
-* [~~en.prothom-alo.com~~](en.prothom-alo.com/)
-* [thedailystar.net](www.thedailystar.net)
+* [~~en.prothom-alo.com~~](http://en.prothom-alo.com)
+* [thedailystar.net](http://www.thedailystar.net)

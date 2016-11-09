@@ -56,11 +56,23 @@ class DailyStarSpider(scrapy.Spider):
             yield scrapy.Request(self.next_page, callback=self.parse)
 
     def parseNews(self, response):
-        # self.logger.info("CALLING ALL FUCKERS")
+        
         news_item = response.meta['news_item']
-        self.logger.info(news_item['title'] + "\n" + self.start_date.__str__() + "\n===================")
+
+        news_item['bottom_tag_line'] = response.xpath("//h2[@class='h5 margin-bottom-zero']/em/text()").extract_first()
+        news_item['top_tag_line'] = response.xpath("//h4[@class='uppercase']/text()").extract_first()
+        news_item = self.getPublishedTime(news_item, response)
+
+
         yield {
-            "News Title" : news_item['title']
+            "News Title" : news_item['title'],
+            "Published Date" : news_item['published_date']
         }
 
+    def getPublishedTime(self, news_item, response):
+        dt = response.xpath("//meta[@itemprop='datePublished']/@content").extract_first()
+        converted_dt = datetime.datetime.strptime( dt.split("+")[0], "%Y-%m-%dT%H:%M:%S")
+        formatted_dt = converted_dt.strftime("%Y-%m-%d %I:%M %p")
+        news_item['published_date'] = formatted_dt
+        return news_item
         

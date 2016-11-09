@@ -23,3 +23,5 @@ class DailyStarItem(Item):
     url = Field()
     breadcrumb = Field()
     images = Field()
+    top_tag_line = Field()
+    bottom_tag_line = Field()

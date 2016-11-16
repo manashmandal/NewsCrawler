@@ -7,6 +7,9 @@ from newspaper import Article
 
 class Tagger:
 	def __init__(self, classifier_path, ner_path):
+		self.LOCATION = []
+		self.PERSON = []
+
 		self.classifier_path = classifier_path
 		self.ner_path = ner_path
 
@@ -55,44 +58,51 @@ class Tagger:
 
 	def entity_group(self, text):
 	    # Tokenizing the news content
-	    tokenized_words = self.st.tag(word_tokenize(text))
-	    comparator = tokenized_words[0]
-	    list_index = 0
-	    append_index = 0
-	    # Store the element from the beginning of the list
-	    comparator = tokenized_words[0]
-	    # Insert first element to the tag_touple list
-	    tag_touple_list = [(comparator[0], comparator[1])]
-	    # Increase the list index since we've added an element at the beginning
-	    list_index += 1
-	    # Continue iteration until the index has reached to the end of the list
-	    while (list_index < len(tokenized_words)):
-	        if (comparator[1] == tokenized_words[list_index][1]):
-	            # If it's a Percentage symbol skip the space
-	            space_or_not = '' if tokenized_words[list_index][0] == '%' else ' '
-	            # which is to be appended
-	            to_be_appended = tag_touple_list[append_index][0] + space_or_not + tokenized_words[list_index][0]
-	            # Set the modified value to the touple list
-	            tag_touple_list[append_index] = (to_be_appended, comparator[1])
-	            # Increase list index
-	            list_index += 1
-	            continue
-	        else:
-	            # Replace the comparator with new one
-	            comparator = tokenized_words[list_index]
-	            # print "Comparator got changed: {0}".format(comparator)
-	            # Place the comparator to the list
-	            tag_touple_list.append((comparator[0], comparator[1]))
-	            # Increase index
-	            list_index += 1
-	            # Since it's a new entity we need to increase the location of the insertion
-	            append_index += 1
-	    # return set(tag_touple_list)
+		tokenized_words = self.st.tag(word_tokenize(text))
+		comparator = tokenized_words[0]
+		list_index = 0
+		append_index = 0
+		# Store the element from the beginning of the list
+		comparator = tokenized_words[0]
+		# Insert first element to the tag_touple list
+		tag_touple_list = [(comparator[0], comparator[1])]
+		# Increase the list index since we've added an element at the beginning
+		list_index += 1
+		# Continue iteration until the index has reached to the end of the list
+		while (list_index < len(tokenized_words)):
+			if (comparator[1] == tokenized_words[list_index][1]):
+				# If it's a Percentage symbol skip the space
+				space_or_not = '' if tokenized_words[list_index][0] == '%' else ' '
+				# which is to be appended
+				to_be_appended = tag_touple_list[append_index][0] + space_or_not + tokenized_words[list_index][0]
+				# Set the modified value to the touple list
+				tag_touple_list[append_index] = (to_be_appended, comparator[1])
+				# Increase list index
+				list_index += 1
+				continue
+			else:
+				# Replace the comparator with new one
+				comparator = tokenized_words[list_index]
+				# print "Comparator got changed: {0}".format(comparator)
+				# Place the comparator to the list
+				tag_touple_list.append((comparator[0], comparator[1]))
+				# Increase index
+				list_index += 1
+				# Since it's a new entity we need to increase the location of the insertion
+				append_index += 1
+				# return set(tag_touple_list)
+		# Getting rid of object entities
+		tag_touple_list = [toup for toup in tag_touple_list if toup[1] != 'O']
+		self.LOCATION = []
+		self.PERSON = []
 
-	    # Getting rid of object entities
-	    tag_touple_list = [toup for toup in tag_touple_list if toup[1] != 'O']
+		for tags in tag_touple_list:
+			if tags[1] == 'PERSON':
+				self.PERSON.append(tags[0])
+			elif tags[1] == 'LOCATION':
+				self.LOCATION.append(tags[0])
 
-	    return tag_touple_list
+		return tag_touple_list
 
 	# Cleans up unnecessary symbols
 	def clean_up(self, tag_touple_list):

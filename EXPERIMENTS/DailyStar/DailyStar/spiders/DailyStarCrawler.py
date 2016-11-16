@@ -105,11 +105,12 @@ class DailyStarSpider(scrapy.Spider):
 
 
         # Getting the article
+        self.tagger.entity_group(news_item['article'])
 
         yield {
             "News Title" : news_item['title'],
             "Content" : news_item['article'],
-            "Entity" : self.tagger.entity_group(news_item['article'])
+            "LOCATION " : self.tagger.LOCATION,
             # "Published Date" : news_item['published_date'],
             # "Image URL" : news_item['images'],
             # "Reporter" : news_item['reporter'],

@@ -5,6 +5,13 @@ import datetime
 from DailyStar.items import DailyStarItem
 from newspaper import Article
 
+from DailyStar.Helpers.CustomNERTagger import Tagger
+
+STANFORD_NER_PATH = 'C:\StanfordParser\stanford-ner-2015-12-09\stanford-ner.jar'
+STANFORD_CLASSIFIER_PATH = 'C:\StanfordParser\stanford-ner-2015-12-09\classifiers\english.all.3class.distsim.crf.ser.gz'
+
+
+
 class DailyStarSpider(scrapy.Spider):
     name = 'dailystar'
 
@@ -23,6 +30,10 @@ class DailyStarSpider(scrapy.Spider):
         self.start_day = 1
         self.start_date = datetime.date(self.start_year , self.start_month , self.start_day)
         self.url = 'http://www.thedailystar.net/newspaper?' + self.start_date.__str__()
+
+        # Creating the Tagger object
+        self.tagger = Tagger(classifier_path=STANFORD_CLASSIFIER_PATH, ner_path=STANFORD_NER_PATH)
+
         yield scrapy.Request(self.url, self.parse)
 
     def parse(self, response):

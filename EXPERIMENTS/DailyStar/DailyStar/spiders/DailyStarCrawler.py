@@ -3,6 +3,7 @@ import logging
 import datetime
 
 from DailyStar.items import DailyStarItem
+from newspaper import Article
 
 class DailyStarSpider(scrapy.Spider):
     name = 'dailystar'
@@ -77,12 +78,23 @@ class DailyStarSpider(scrapy.Spider):
         # Get reporter
         news_item['reporter'] = response.xpath("//div[@class='author-name margin-bottom-big']/span/a/text()").extract_first()
 
+        # Get the summary and keywords using 'newspaper' package
+        # [WARNING : This section slows down the overall scraping process]
+        article = Article(url=news_item['url'])
+        article.download()
+        article.parse()
+        article.nlp()
+        
+        news_item['generated_summary'] = article.summary
+        news_item['generated_keywords'] = article.keywords
 
         yield {
             "News Title" : news_item['title'],
             "Published Date" : news_item['published_date'],
             "Image URL" : news_item['images'],
-            "Reporter" : news_item['reporter']
+            "Reporter" : news_item['reporter'],
+            "Summary" : news_item['generated_summary'],
+            "Keywords" : news_item['generated_keywords']
         }
 
     def getPublishedTime(self, news_item, response):

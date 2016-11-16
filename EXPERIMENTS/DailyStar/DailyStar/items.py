@@ -27,6 +27,14 @@ class DailyStarItem(Item):
     bottom_tag_line = Field()
     image_captions = Field()
 
+    # NER tags
+    ner_person = Field()
+    ner_money = Field()
+    ner_time = Field()
+    ner_organization = Field()
+    ner_location = Field()
+    ner_percent = Field()
+
     # These items are generated using 'newspaper' python package
     generated_keywords = Field()
     generated_summary = Field()

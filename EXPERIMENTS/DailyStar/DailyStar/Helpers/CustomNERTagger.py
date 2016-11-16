@@ -9,6 +9,10 @@ class Tagger:
 	def __init__(self, classifier_path, ner_path):
 		self.LOCATION = []
 		self.PERSON = []
+		self.ORGANIZATION = []
+		self.TIME = []
+		self.MONEY = []
+		self.PERCENT = []
 
 		self.classifier_path = classifier_path
 		self.ner_path = ner_path
@@ -95,12 +99,31 @@ class Tagger:
 		tag_touple_list = [toup for toup in tag_touple_list if toup[1] != 'O']
 		self.LOCATION = []
 		self.PERSON = []
+		self.ORGANIZATION = []
+		self.TIME = []
+		self.PERCENT = []
+		self.MONEY = []
 
 		for tags in tag_touple_list:
 			if tags[1] == 'PERSON':
 				self.PERSON.append(tags[0])
 			elif tags[1] == 'LOCATION':
 				self.LOCATION.append(tags[0])
+			elif tags[1] == 'ORGANIZATION':
+				self.ORGANIZATION.append(tags[0])
+			elif tags[1] == 'PERCENT':
+				self.PERCENT.append(tags[1])
+			elif tags[1] == 'TIME':
+				self.TIME.append(tags[1])
+			elif tags[1] == 'MONEY':
+				self.MONEY.append(tags[1])
+
+		self.ORGANIZATION = set(self.ORGANIZATION)
+		self.PERSON = set(self.PERSON)
+		self.PERCENT = set(self.PERCENT)
+		self.MONEY = set(self.MONEY)
+		self.TIME = set(self.TIME)
+		self.LOCATION = set(self.LOCATION)
 
 		return tag_touple_list
 

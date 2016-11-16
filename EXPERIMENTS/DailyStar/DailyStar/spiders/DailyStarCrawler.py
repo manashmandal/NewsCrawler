@@ -95,22 +95,30 @@ class DailyStarSpider(scrapy.Spider):
 
         # Get the summary and keywords using 'newspaper' package
         # [WARNING : This section slows down the overall scraping process]
-        article = Article(url=news_item['url'])
-        article.download()
-        article.parse()
-        article.nlp()
+        # article = Article(url=news_item['url'])
+        # article.download()
+        # article.parse()
+        # article.nlp()
         
-        news_item['generated_summary'] = article.summary
-        news_item['generated_keywords'] = article.keywords
+        # news_item['generated_summary'] = article.summary
+        # news_item['generated_keywords'] = article.keywords
 
 
         # Getting the article
         self.tagger.entity_group(news_item['article'])
 
+        # Getting the ner tags
+        news_item['ner_person'] = self.tagger.PERSON
+        news_item['ner_organization'] = self.tagger.ORGANIZATION
+        news_item['ner_time'] = self.tagger.TIME
+        news_item['ner_percent'] = self.tagger.PERCENT
+        news_item['ner_money'] = self.tagger.MONEY
+        news_item['ner_location'] = self.tagger.LOCATION
+
         yield {
             "News Title" : news_item['title'],
             "Content" : news_item['article'],
-            "LOCATION " : self.tagger.LOCATION,
+            "NER Organization" : news_item['ner_organization']
             # "Published Date" : news_item['published_date'],
             # "Image URL" : news_item['images'],
             # "Reporter" : news_item['reporter'],

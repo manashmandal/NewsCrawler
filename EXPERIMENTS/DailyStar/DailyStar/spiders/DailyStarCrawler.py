@@ -73,13 +73,16 @@ class DailyStarSpider(scrapy.Spider):
 
         # Get the breadcrumb
         news_item['breadcrumb'] = response.xpath("//div[@class='breadcrumb']//span[@itemprop='name']/text()").extract()
-        
+
+        # Get reporter
+        news_item['reporter'] = response.xpath("//div[@class='author-name margin-bottom-big']/span/a/text()").extract_first()
 
 
         yield {
             "News Title" : news_item['title'],
             "Published Date" : news_item['published_date'],
-            "Image URL" : news_item['images']
+            "Image URL" : news_item['images'],
+            "Reporter" : news_item['reporter']
         }
 
     def getPublishedTime(self, news_item, response):

@@ -25,6 +25,7 @@ class DailyStarItem(Item):
     images = Field()
     top_tag_line = Field()
     bottom_tag_line = Field()
+    image_captions = Field()
 
     # These items are generated using 'newspaper' python package
     generated_keywords = Field()

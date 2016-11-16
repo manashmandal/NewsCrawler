@@ -7,10 +7,11 @@ from newspaper import Article
 
 from DailyStar.Helpers.CustomNERTagger import Tagger
 
+#indico API_KEY 8ee6432e7dc137740c40c0af8d7e9d05
+
+# Change these paths according to your system
 STANFORD_NER_PATH = 'C:\StanfordParser\stanford-ner-2015-12-09\stanford-ner.jar'
 STANFORD_CLASSIFIER_PATH = 'C:\StanfordParser\stanford-ner-2015-12-09\classifiers\english.all.3class.distsim.crf.ser.gz'
-
-
 
 class DailyStarSpider(scrapy.Spider):
     name = 'dailystar'
@@ -104,7 +105,7 @@ class DailyStarSpider(scrapy.Spider):
         # news_item['generated_keywords'] = article.keywords
 
 
-        # Getting the article
+        # Tagging the article
         self.tagger.entity_group(news_item['article'])
 
         # Getting the ner tags
@@ -115,10 +116,17 @@ class DailyStarSpider(scrapy.Spider):
         news_item['ner_money'] = self.tagger.MONEY
         news_item['ner_location'] = self.tagger.LOCATION
 
+        # ML tags
+        news_item['ml_tags'] = None
+
+        news_item['sentiment'] = self.tagger.get_indico_sentiment(news_item['article'])
+
+        # Data can be collected as csv also 
         yield {
-            "News Title" : news_item['title'],
-            "Content" : news_item['article'],
-            "NER Organization" : news_item['ner_organization']
+            "Sentiment" : news_item['sentiment'],
+            # "News Title" : news_item['title'],
+            # "Content" : news_item['article'],
+            # "NER Organization" : news_item['ner_organization']
             # "Published Date" : news_item['published_date'],
             # "Image URL" : news_item['images'],
             # "Reporter" : news_item['reporter'],

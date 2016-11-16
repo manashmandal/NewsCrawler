@@ -5,6 +5,9 @@ from nltk.chunk import conlltags2tree
 from nltk.tree import Tree 
 from newspaper import Article
 
+#indico API for sentiment analysis
+import indicoio
+
 class Tagger:
 	def __init__(self, classifier_path, ner_path):
 		self.LOCATION = []
@@ -13,6 +16,8 @@ class Tagger:
 		self.TIME = []
 		self.MONEY = []
 		self.PERCENT = []
+
+		indicoio.config.api_key = '8ee6432e7dc137740c40c0af8d7e9d05'
 
 		self.classifier_path = classifier_path
 		self.ner_path = ner_path
@@ -137,3 +142,10 @@ class Tagger:
 			if to_be_replaced in toup[0]:
 				tag_touple_list[index] = (toup[0].replace(to_be_replaced, replace_with), toup[1])
 		return tag_touple_list
+
+	
+	def get_indico_sentiment(self, text):
+		sentiment = indicoio.sentiment_hq(text)
+		if sentiment >= 0.5:
+			return "Positive"
+		return "Negative"

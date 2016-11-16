@@ -17,7 +17,7 @@ class DailyStarItem(Item):
     last_updated = Field()
     published_date = Field()
     article = Field()
-    shared = Field()
+    share_count = Field()
     comment_count = Field()
     title = Field()
     url = Field()
@@ -26,6 +26,10 @@ class DailyStarItem(Item):
     top_tag_line = Field()
     bottom_tag_line = Field()
     image_captions = Field()
+
+    ml_tags = Field()
+    sentiment = Field()
+
 
     # NER tags
     ner_person = Field()

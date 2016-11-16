@@ -13,6 +13,11 @@ from DailyStar.Helpers.CustomNERTagger import Tagger
 STANFORD_NER_PATH = 'C:\StanfordParser\stanford-ner-2015-12-09\stanford-ner.jar'
 STANFORD_CLASSIFIER_PATH = 'C:\StanfordParser\stanford-ner-2015-12-09\classifiers\english.all.3class.distsim.crf.ser.gz'
 
+# Using elasticsearch
+from elasticsearch import Elasticsearch
+
+es = Elasticsearch()
+
 class DailyStarSpider(scrapy.Spider):
     name = 'dailystar'
 
@@ -34,6 +39,8 @@ class DailyStarSpider(scrapy.Spider):
 
         # Creating the Tagger object
         self.tagger = Tagger(classifier_path=STANFORD_CLASSIFIER_PATH, ner_path=STANFORD_NER_PATH)
+
+        self.id = 0
 
         yield scrapy.Request(self.url, self.parse)
 
@@ -69,6 +76,8 @@ class DailyStarSpider(scrapy.Spider):
             yield scrapy.Request(self.next_page, callback=self.parse)
 
     def parseNews(self, response):
+
+        self.id += 1
         
         news_item = response.meta['news_item']
         
@@ -96,18 +105,20 @@ class DailyStarSpider(scrapy.Spider):
 
         # Get the summary and keywords using 'newspaper' package
         # [WARNING : This section slows down the overall scraping process]
-        # article = Article(url=news_item['url'])
-        # article.download()
-        # article.parse()
-        # article.nlp()
+        article = Article(url=news_item['url'])
+        article.download()
+        article.parse()
+        article.nlp()
         
-        # news_item['generated_summary'] = article.summary
-        # news_item['generated_keywords'] = article.keywords
+        news_item['generated_summary'] = article.summary
+        news_item['generated_keywords'] = article.keywords
 
 
         # Tagging the article
-        self.tagger.entity_group(news_item['article'])
-
+        try:
+            self.tagger.entity_group(news_item['article'])
+        except:
+            print "NER Tagger exception"
         # Getting the ner tags
         news_item['ner_person'] = self.tagger.PERSON
         news_item['ner_organization'] = self.tagger.ORGANIZATION
@@ -121,18 +132,35 @@ class DailyStarSpider(scrapy.Spider):
 
         news_item['sentiment'] = self.tagger.get_indico_sentiment(news_item['article'])
 
-        # Data can be collected as csv also 
-        yield {
+        doc = {
+            "News URL" : news_item['url'],
+            "Reporter" : news_item['reporter'],
+            "Published" : news_item['published_date'],
+            "Title " : news_item['title'],
+            "Content" : news_item['article'],
+            "Top Tagline" : news_item['top_tag_line'],
+            "Bottom Tagline" : news_item['bottom_tag_line'],
+            "Images" : news_item['images'],
+            "Image Captions" : news_item['image_captions'],
+            "Breadcrumb" : news_item['breadcrumb'],
             "Sentiment" : news_item['sentiment'],
-            # "News Title" : news_item['title'],
-            # "Content" : news_item['article'],
-            # "NER Organization" : news_item['ner_organization']
-            # "Published Date" : news_item['published_date'],
-            # "Image URL" : news_item['images'],
-            # "Reporter" : news_item['reporter'],
-            # "Summary" : news_item['generated_summary'],
-            # "Keywords" : news_item['generated_keywords']
+            "ML Tags" : None,
+            "Section" : news_item['newspaper_section'],
+            "NER Person" : news_item['ner_person'],
+            "NER Organization" : news_item['ner_organization'],
+            "NER Money" : news_item['ner_money'],
+            "NER Time" : news_item['ner_time'],
+            "NER Location" : news_item['ner_location'],
+            "NER Percent" : news_item['ner_percent'],
+            "Generated Keywords" : news_item['generated_keywords'],
+            "Generated Summary" : news_item['generated_summary'],
+            "timestamp" : datetime.datetime.now(),
         }
+
+        res = es.index(index="dailystar-index", doc_type='news', id=self.id, body=doc)
+
+        # Data can be collected as csv also 
+        yield doc
 
     def getPublishedTime(self, news_item, response):
         dt = response.xpath("//meta[@itemprop='datePublished']/@content").extract_first()

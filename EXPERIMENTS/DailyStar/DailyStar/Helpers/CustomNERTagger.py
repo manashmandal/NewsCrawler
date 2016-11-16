@@ -118,12 +118,12 @@ class Tagger:
 			elif tags[1] == 'MONEY':
 				self.MONEY.append(tags[1])
 
-		self.ORGANIZATION = set(self.ORGANIZATION)
-		self.PERSON = set(self.PERSON)
-		self.PERCENT = set(self.PERCENT)
-		self.MONEY = set(self.MONEY)
-		self.TIME = set(self.TIME)
-		self.LOCATION = set(self.LOCATION)
+		self.ORGANIZATION = list(set(self.ORGANIZATION))
+		self.PERSON = list(set(self.PERSON))
+		self.PERCENT = list(set(self.PERCENT))
+		self.MONEY = list(set(self.MONEY))
+		self.TIME = list(set(self.TIME))
+		self.LOCATION = list(set(self.LOCATION))
 
 		return tag_touple_list
 

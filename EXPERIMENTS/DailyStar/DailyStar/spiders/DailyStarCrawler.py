@@ -70,6 +70,10 @@ class DailyStarSpider(scrapy.Spider):
     def parseNews(self, response):
         
         news_item = response.meta['news_item']
+        
+        #Getting the Article
+        paragraphs = response.xpath("//div[@class='field-body view-mode-teaser']//p/text()").extract()
+        news_item['article'] = ''.join([para.strip() for para in paragraphs])
 
         # Getting bottom tag line
         news_item['bottom_tag_line'] = response.xpath("//h2[@class='h5 margin-bottom-zero']/em/text()").extract_first()
@@ -99,13 +103,18 @@ class DailyStarSpider(scrapy.Spider):
         news_item['generated_summary'] = article.summary
         news_item['generated_keywords'] = article.keywords
 
+
+        # Getting the article
+
         yield {
             "News Title" : news_item['title'],
-            "Published Date" : news_item['published_date'],
-            "Image URL" : news_item['images'],
-            "Reporter" : news_item['reporter'],
-            "Summary" : news_item['generated_summary'],
-            "Keywords" : news_item['generated_keywords']
+            "Content" : news_item['article'],
+            "Entity" : self.tagger.entity_group(news_item['article'])
+            # "Published Date" : news_item['published_date'],
+            # "Image URL" : news_item['images'],
+            # "Reporter" : news_item['reporter'],
+            # "Summary" : news_item['generated_summary'],
+            # "Keywords" : news_item['generated_keywords']
         }
 
     def getPublishedTime(self, news_item, response):

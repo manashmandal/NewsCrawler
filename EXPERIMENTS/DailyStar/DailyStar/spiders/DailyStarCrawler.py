@@ -59,13 +59,21 @@ class DailyStarSpider(scrapy.Spider):
         
         news_item = response.meta['news_item']
 
+        # Getting bottom tag line
         news_item['bottom_tag_line'] = response.xpath("//h2[@class='h5 margin-bottom-zero']/em/text()").extract_first()
+        # Getting top tag line
         news_item['top_tag_line'] = response.xpath("//h4[@class='uppercase']/text()").extract_first()
+        
+        # Getting the published time
         news_item = self.getPublishedTime(news_item, response)
 
         # Getting the image source and captions
         news_item['images'] = response.xpath("//div[@class='caption']/../img/@src").extract()
         news_item['image_captions'] = response.xpath("//div[@class='caption']/text()").extract()
+
+        # Get the breadcrumb
+        news_item['breadcrumb'] = response.xpath("//div[@class='breadcrumb']//span[@itemprop='name']/text()").extract()
+        
 
 
         yield {

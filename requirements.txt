@@ -1,0 +1,7 @@
+NewsCrawler
+newspaper==0.0.9.8
+scrapy=1.2.1
+nltk==3.2.1
+elasticsearch>=2.0.0,<3.0.0
+pymongo==3.3.1
+indicoio==1.0.3

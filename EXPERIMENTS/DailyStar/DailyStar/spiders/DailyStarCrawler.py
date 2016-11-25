@@ -6,12 +6,8 @@ from DailyStar.items import DailyStarItem
 from newspaper import Article
 
 from DailyStar.Helpers.CustomNERTagger import Tagger
+from DailyStar.credentials_and_configs.stanford_ner_path import STANFORD_CLASSIFIER_PATH, STANFORD_NER_PATH
 
-#indico API_KEY 8ee6432e7dc137740c40c0af8d7e9d05
-
-# Change these paths according to your system
-STANFORD_NER_PATH = 'C:\StanfordParser\stanford-ner-2015-12-09\stanford-ner.jar'
-STANFORD_CLASSIFIER_PATH = 'C:\StanfordParser\stanford-ner-2015-12-09\classifiers\english.all.3class.distsim.crf.ser.gz'
 
 # Using elasticsearch
 from elasticsearch import Elasticsearch
@@ -53,6 +49,7 @@ class DailyStarSpider(scrapy.Spider):
 
         for sel in self.main_selection:
             news_item = DailyStarItem()
+            news_item['newspaper_name'] = 'The Daily Star'
             news_item['newspaper_section'] = sel.xpath("../../../../../../../div[1]/h2/text()").extract_first()
             news_item['url'] = self.main_url + sel.xpath("a/@href").extract_first()
             news_item['title'] = sel.xpath("a/text()").extract_first().strip()
@@ -127,6 +124,14 @@ class DailyStarSpider(scrapy.Spider):
         news_item['ner_money'] = self.tagger.MONEY
         news_item['ner_location'] = self.tagger.LOCATION
 
+        # Contains all occurances
+        news_item['ner_list_person'] = self.tagger.LIST_PERSON
+        news_item['ner_list_organization'] = self.tagger.LIST_ORGANIZATION
+        news_item['ner_list_time'] = self.tagger.LIST_TIME
+        news_item['ner_list_money'] = self.tagger.LIST_MONEY
+        news_item['ner_list_location'] = self.tagger.LIST_LOCATION
+        news_item['ner_list_percent'] = self.tagger.LIST_PERCENT
+
         # ML tags
         news_item['ml_tags'] = None
 
@@ -146,18 +151,27 @@ class DailyStarSpider(scrapy.Spider):
             "sentiment" : news_item['sentiment'],
             "ml_tags" : None,
             "section" : news_item['newspaper_section'],
+            
             "ner_person" : news_item['ner_person'],
             "ner_organization" : news_item['ner_organization'],
             "ner_money" : news_item['ner_money'],
             "ner_time" : news_item['ner_time'],
             "ner_location" : news_item['ner_location'],
             "ner_percent" : news_item['ner_percent'],
+
+            "ner_list_person" : news_item['ner_list_person'],
+            "ner_list_organization" : news_item['ner_list_organization'],
+            "ner_list_money" : news_item['ner_list_money'],
+            "ner_list_time" : news_item['ner_list_time'],
+            "ner_list_location" : news_item['ner_list_location'],
+            "ner_list_percent" : news_item['ner_list_percent'],
+
             "generated_keywords" : news_item['generated_keywords'],
             "generated_summary" : news_item['generated_summary'],
             "timestamp" : datetime.datetime.now(),
         }
 
-        res = es.index(index="newspaper_index", doc_type='news', id=self.id, body=doc)
+        # res = es.index(index="newspaper_index", doc_type='news', id=self.id, body=doc)
 
         # Data can be collected as csv also 
         yield doc

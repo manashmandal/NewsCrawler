@@ -8,6 +8,8 @@ from newspaper import Article
 #indico API for sentiment analysis
 import indicoio
 
+from DailyStar.credentials_and_configs.keys import INDICOIO_API_KEY
+
 class Tagger:
 	def __init__(self, classifier_path, ner_path):
 		self.LOCATION = []
@@ -17,7 +19,14 @@ class Tagger:
 		self.MONEY = []
 		self.PERCENT = []
 
-		indicoio.config.api_key = '8ee6432e7dc137740c40c0af8d7e9d05'
+		self.LIST_LOCATION = []
+		self.LIST_PERSON = []
+		self.LIST_ORGANIZATION = []
+		self.LIST_TIME = []
+		self.LIST_MONEY = []
+		self.LIST_PERCENT = []
+
+		indicoio.config.api_key = INDICOIO_API_KEY
 
 		self.classifier_path = classifier_path
 		self.ner_path = ner_path
@@ -102,6 +111,7 @@ class Tagger:
 				# return set(tag_touple_list)
 		# Getting rid of object entities
 		tag_touple_list = [toup for toup in tag_touple_list if toup[1] != 'O']
+		
 		self.LOCATION = []
 		self.PERSON = []
 		self.ORGANIZATION = []
@@ -109,19 +119,32 @@ class Tagger:
 		self.PERCENT = []
 		self.MONEY = []
 
+		self.LIST_LOCATION = []
+		self.LIST_PERSON = []
+		self.LIST_ORGANIZATION = []
+		self.LIST_TIME = []
+		self.LIST_MONEY = []
+		self.LIST_PERCENT = []
+
 		for tags in tag_touple_list:
 			if tags[1] == 'PERSON':
 				self.PERSON.append(tags[0])
+				self.LIST_PERSON.append(tags[0])
 			elif tags[1] == 'LOCATION':
 				self.LOCATION.append(tags[0])
+				self.LIST_LOCATION.append(tags[0])
 			elif tags[1] == 'ORGANIZATION':
 				self.ORGANIZATION.append(tags[0])
+				self.LIST_ORGANIZATION.append(tags[0])
 			elif tags[1] == 'PERCENT':
-				self.PERCENT.append(tags[1])
+				self.PERCENT.append(tags[0])
+				self.LIST_PERCENT.append(tags[0])
 			elif tags[1] == 'TIME':
-				self.TIME.append(tags[1])
+				self.TIME.append(tags[0])
+				self.LIST_TIME.append(tags[0])
 			elif tags[1] == 'MONEY':
-				self.MONEY.append(tags[1])
+				self.MONEY.append(tags[0])
+				self.LIST_MONEY.append(tags[0])
 
 		self.ORGANIZATION = list(set(self.ORGANIZATION))
 		self.PERSON = list(set(self.PERSON))

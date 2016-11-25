@@ -185,7 +185,7 @@ class DailyStarSpider(scrapy.Spider):
             "timestamp" : datetime.datetime.now().strftime(self.datetime_format),
         }
 
-        # res = es.index(index="newspaper_index", doc_type='news', id=self.id, body=doc)
+        res = es.index(index="newspaper_index", doc_type='news', id=self.id, body=doc)
 
         # Data can be collected as csv also 
         yield doc

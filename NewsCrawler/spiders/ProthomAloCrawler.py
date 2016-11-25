@@ -48,5 +48,21 @@ class ProthomAloSpider(scrapy.Spider):
             news_item['newspaper_name'] = 'Prothom Alo'
             news_item['category'] = sel.xpath("h3/a/@href").extract_first().split('/')[0]
             news_item['url'] = self.main_url + sel.xpath("h3/a/@href").extract_first()
-            news_item['title'] = sel.xpath("h3/a/text()").extract_first()
-            
+            news_item['title'] = sel.xpath("h3/a/text()").extract_first().strip()
+            news_item['news_location'] = self.get_location(sel.xpath("div/span[1]/text()").extract_first())
+
+            # Sometimes reporter - newslocation span is missing
+            if (len(sel.xpath("div/span")) < 2):
+                news_item['published_date'] = sel.xpath("div/span[1]/text()").extract_first().strip()
+                news_item['reporter'] = None
+            else:
+                news_item['reporter'] = sel.xpath("div/span[1]/text()").split('.')[0] 
+                news_item['published_date'] = sel.xpath("div/span[2]/text()").extract_first().strip()
+
+            news_item['last_update'] = news_item['published_date']
+    
+    def get_location(self, inp):
+        inp_list = inp.split('.')
+        if (len(inp_list) < 2):
+            return None
+        return inp_list[-1].strip()

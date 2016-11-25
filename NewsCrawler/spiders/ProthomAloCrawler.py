@@ -8,7 +8,7 @@ from newspaper import Article
 from NewsCrawler.Helpers.CustomNERTagger import Tagger
 from NewsCrawler.credentials_and_configs.stanford_ner_path import STANFORD_CLASSIFIER_PATH, STANFORD_NER_PATH
 
-from NewsCrawler.Helpers.date_helper import dateobject_to_split_date, DATETIME_FORMAT
+from NewsCrawler.Helpers.date_helper import dateobject_to_split_date, DATETIME_FORMAT, increase_day_by_one
 
 from scrapy.exceptions import CloseSpider
 
@@ -21,15 +21,16 @@ class ProthomAloSpider(scrapy.Spider):
 
     def __init__(self, start_date="01-07-2014", end_date="02-07-2014", delimiter='-'):
         self.start_day, self.start_month, self.start_year = dateobject_to_split_date(start_date)
-        self.end_day, self.start_month, self.end_year = dateobject_to_split_date(end_date)
+        self.end_day, self.end_month, self.end_year = dateobject_to_split_date(end_date)
     
     def start_requests(self):
         self.begin_date = datetime.date(self.start_year, self.start_month, self.start_day)
 
         self.start_date = datetime.date(self.start_year, self.start_month, self.start_day)
-        self.end_date = datetime.date(self.start_year, self.start_month, self.start_day)
+        self.end_date = datetime.date(self.end_year, self.end_month, self.end_day)
 
         self.main_url = 'http://en.prothom-alo.com'
+        self.baseurl = 'http://en.prothom-alo.com/archive/'
         self.url = 'http://en.prothom-alo.com/archive/' + self.start_date.__str__()
     
         # Creating the tagger object
@@ -64,6 +65,26 @@ class ProthomAloSpider(scrapy.Spider):
             request = scrapy.Request(news_item['url'], callback=self.parseNews)
             request.meta['news_item'] = news_item
             yield request
+
+        self.start_date = increase_day_by_one(self.start_date)
+
+        self.logger.info("INCREASED: " + self.start_date.__str__())
+
+        self.next_page = self.baseurl + self.start_date.__str__()
+
+        # Crawling termination condition
+        if self.start_date > self.end_date:
+            raise CloseSpider('Done scraping from '+ self.begin_date.__str__() + ' upto ' +  self.end_date.__str__())
+
+        try:
+            self.logger.info("TRYING")
+            yield scrapy.Request(self.next_page, callback=self.parse)
+        except:
+            self.logger.info("PROBLEM")
+            self.start_date = increase_day_by_one(self.start_date)
+            self.next_page = self.baseurl + self.start_date.__str__()
+            yield scrapy.Request(self.next_page, callback=self.parse)
+
 
     def parseNews(self, response):
         self.logger.info("TRYING")
@@ -133,7 +154,7 @@ class ProthomAloSpider(scrapy.Spider):
             "breadcrumb" : news_item['breadcrumb'],
             "sentiment" : news_item['sentiment'],
             "ml_tags" : None,
-            "section" : news_item['newspaper_section'],
+            "category" : news_item['category'],
             
             "ner_person" : news_item['ner_person'],
             "ner_organization" : news_item['ner_organization'],
@@ -155,7 +176,7 @@ class ProthomAloSpider(scrapy.Spider):
         }
 
         # Inserting data to Elasticsearch
-        res = es.index(index="newspaper_index", doc_type="news", id=self.id, body=doc)
+        # res = es.index(index="newspaper_index", doc_type="news", id=self.id, body=doc)
 
         # Output can also be saved as csv/json
         yield doc

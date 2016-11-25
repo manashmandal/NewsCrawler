@@ -8,6 +8,8 @@ from newspaper import Article
 from NewsCrawler.Helpers.CustomNERTagger import Tagger
 from NewsCrawler.credentials_and_configs.stanford_ner_path import STANFORD_CLASSIFIER_PATH, STANFORD_NER_PATH
 
+from scrapy.exceptions import CloseSpider
+
 
 # Using elasticsearch
 from elasticsearch import Elasticsearch
@@ -21,16 +23,15 @@ class DailyStarSpider(scrapy.Spider):
         d += datetime.timedelta(days=1)
         return d
 
-    # def __init__(self, start_day, start_month, start_year):
-    #     self.start_day = int(start_day)
-    #     self.start_month = int(start_month)
-    #     self.start_year = int(start_year)
+    def __init__(self, start_date='01-01-2016', end_date='02-01-2016', delimiter='-'):
+        self.start_day, self.start_month, self.start_year = [int(i) for i in start_date.split(delimiter)]
+        self.end_day, self.end_month, self.end_year = [int(i) for i in end_date.split(delimiter)]
 
     def start_requests(self):
-        self.start_year = 2016
-        self.start_month = 1
-        self.start_day = 1
+ 
         self.start_date = datetime.date(self.start_year , self.start_month , self.start_day)
+        self.end_date = datetime.date(self.end_year, self.end_month, self.end_day)
+
         self.url = 'http://www.thedailystar.net/newspaper?' + self.start_date.__str__()
 
         # Creating the Tagger object
@@ -63,6 +64,10 @@ class DailyStarSpider(scrapy.Spider):
 
         self.next_page = self.baseurl + self.start_date.__str__()
 
+        # Crawling termination condition
+        if self.start_date > self.end_date:
+            raise CloseSpider('Done scraping from '+ self.start_date.__str__() + ' upto ' +  self.end_date.__str__())
+
         try:
             self.logger.info("TRYING")
             yield scrapy.Request(self.next_page, callback=self.parse)
@@ -71,6 +76,10 @@ class DailyStarSpider(scrapy.Spider):
             self.start_date = self.increase_day_by_one(self.start_date)
             self.next_page = self.baseurl + self.start_date.__str__()
             yield scrapy.Request(self.next_page, callback=self.parse)
+
+        
+
+        
 
     def parseNews(self, response):
 
@@ -100,13 +109,13 @@ class DailyStarSpider(scrapy.Spider):
         # Get reporter
         news_item['reporter'] = response.xpath("//div[@class='author-name margin-bottom-big']/span/a/text()").extract_first()
 
+
         # Get the summary and keywords using 'newspaper' package
         # [WARNING : This section slows down the overall scraping process]
         article = Article(url=news_item['url'])
         article.download()
         article.parse()
         article.nlp()
-        
         news_item['generated_summary'] = article.summary
         news_item['generated_keywords'] = article.keywords
 

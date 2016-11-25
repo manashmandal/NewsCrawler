@@ -56,10 +56,27 @@ class ProthomAloSpider(scrapy.Spider):
                 news_item['published_date'] = sel.xpath("div/span[1]/text()").extract_first().strip()
                 news_item['reporter'] = None
             else:
-                news_item['reporter'] = sel.xpath("div/span[1]/text()").split('.')[0] 
+                news_item['reporter'] = sel.xpath("div/span[1]/text()").extract_first().split('.')[0] 
                 news_item['published_date'] = sel.xpath("div/span[2]/text()").extract_first().strip()
 
             news_item['last_update'] = news_item['published_date']
+
+            request = scrapy.Request(news_item['url'], callback=self.parseNews)
+            request.meta['news_item'] = news_item
+            yield request
+
+    def parseNews(self, response):
+        self.logger.info("TRYING")
+
+        # Retreiving news item
+        news_item = response.meta['news_item']
+
+        yield {
+            'title' : news_item['title'],
+            'url' : news_item['url'],
+            'reporter' : news_item['reporter'],
+            'location' : news_item['location']
+        }
     
     def get_location(self, inp):
         inp_list = inp.split('.')

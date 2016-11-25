@@ -67,6 +67,7 @@ class ProthomAloItem(Item):
     ml_tags = Field()
     image_captions = Field()
     sentiment = Field()
+    url = Field()
 
     # NER tags [only unique values]
     ner_person = Field()

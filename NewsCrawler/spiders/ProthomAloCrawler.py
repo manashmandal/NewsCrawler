@@ -78,11 +78,12 @@ class ProthomAloSpider(scrapy.Spider):
         # Currently gets one caption
         news_item['image_captions'] = response.xpath("//div[@itemprop='articleBody']//span/text()").extract_first()
 
+        #Getting the article
+        paragraphs = response.xpath("//div[@itemprop='articleBody']//p/text()").extract()
+        news_item['article'] = "".join([para.strip() for para in paragraphs])
+
         # Getting the breadcrumb
         news_item['breadcrumb'] = response.xpath("//div[@class='breadcrumb']/ul/li/a/strong/text()").extract()
-
-        # Getting the article content
-        news_item['article'] = ''.join([para.strip() for para in response.xpath("//div[@itemprop='articleBody']//p/text()").extract()]
 
         # Applying NLP from newspaper package [WARNING: slows the overall process]
         article = Article(url=news_item['url'])
@@ -91,6 +92,33 @@ class ProthomAloSpider(scrapy.Spider):
         article.nlp()
         news_item['generated_summary'] = article.summary
         news_item['generated_keywords'] = article.keywords
+
+        # Tagging the Article
+        try:
+            self.tagger.entity_group(news_item['article'])
+        except:
+            print "NER Tagger Exception"
+            self.logger.info("NER Crashed")
+        
+        news_item['ner_person'] = self.tagger.PERSON
+        news_item['ner_organization'] = self.tagger.ORGANIZATION
+        news_item['ner_time'] = self.tagger.TIME
+        news_item['ner_percent'] = self.tagger.PERCENT
+        news_item['ner_money'] = self.tagger.MONEY
+        news_item['ner_location'] = self.tagger.LOCATION
+
+        # Contains all occurances
+        news_item['ner_list_person'] = self.tagger.LIST_PERSON
+        news_item['ner_list_organization'] = self.tagger.LIST_ORGANIZATION
+        news_item['ner_list_time'] = self.tagger.LIST_TIME
+        news_item['ner_list_percent'] = self.tagger.LIST_PERCENT
+        news_item['ner_list_money'] = self.tagger.LIST_MONEY
+        news_item['ner_list_location'] = self.tagger.LIST_LOCATION
+
+        #ML Tags
+        news_item['ml_tags'] = None
+
+        news_item['sentiment'] = self.tagger.get_indico_sentiment(news_item['article'])
 
         yield {
             'title' : news_item['title'],

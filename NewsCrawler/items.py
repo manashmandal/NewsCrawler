@@ -51,3 +51,39 @@ class DailyStarItem(Item):
     # These items are generated using 'newspaper' python package
     generated_keywords = Field()
     generated_summary = Field()
+
+
+class ProthomAloItem(Item):
+    category = Field()
+    newspaper_name = Field()
+    reporter = Field()
+    news_location = Field()
+    article = Field()
+    title = Field()
+    last_update = Field()
+    published_date = Field()
+    breadcrumb = Field()
+    images = Field()
+    ml_tags = Field()
+    image_captions = Field()
+    sentiment = Field()
+
+    # NER tags [only unique values]
+    ner_person = Field()
+    ner_money = Field()
+    ner_time = Field()
+    ner_organization = Field()
+    ner_location = Field()
+    ner_percent = Field()
+
+    # Ner tags [considering all ocurrances]
+    ner_list_person = Field()
+    ner_list_money = Field()
+    ner_list_time = Field()
+    ner_list_organization = Field()
+    ner_list_percent = Field()
+    ner_list_location = Field()
+
+    # These items are generated using 'newspaper' python package
+    generated_keywords = Field()
+    generated_summary = Field()

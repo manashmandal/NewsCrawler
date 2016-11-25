@@ -8,7 +8,7 @@ from newspaper import Article
 from NewsCrawler.Helpers.CustomNERTagger import Tagger
 from NewsCrawler.credentials_and_configs.stanford_ner_path import STANFORD_CLASSIFIER_PATH, STANFORD_NER_PATH
 
-from NewsCrawler.Helpers.date_helper import dateobject_to_split_date
+from NewsCrawler.Helpers.date_helper import dateobject_to_split_date, DATETIME_FORMAT
 
 from scrapy.exceptions import CloseSpider
 
@@ -120,12 +120,45 @@ class ProthomAloSpider(scrapy.Spider):
 
         news_item['sentiment'] = self.tagger.get_indico_sentiment(news_item['article'])
 
-        yield {
-            'title' : news_item['title'],
-            'url' : news_item['url'],
-            'reporter' : news_item['reporter'],
-            'location' : news_item['news_location']
+        doc = {
+            "news_url" : news_item['url'],
+            "reporter" : news_item['reporter'],
+            "published" : news_item['published_date'],
+            "last_update" : news_item['published_date'],
+            "title" : news_item['title'],
+            "content" : news_item['article'],
+
+            "images" : news_item['images'],
+            "image_captions" : news_item['image_captions'],
+            "breadcrumb" : news_item['breadcrumb'],
+            "sentiment" : news_item['sentiment'],
+            "ml_tags" : None,
+            "section" : news_item['newspaper_section'],
+            
+            "ner_person" : news_item['ner_person'],
+            "ner_organization" : news_item['ner_organization'],
+            "ner_money" : news_item['ner_money'],
+            "ner_time" : news_item['ner_time'],
+            "ner_location" : news_item['ner_location'],
+            "ner_percent" : news_item['ner_percent'],
+
+            "ner_list_person" : news_item['ner_list_person'],
+            "ner_list_organization" : news_item['ner_list_organization'],
+            "ner_list_money" : news_item['ner_list_money'],
+            "ner_list_time" : news_item['ner_list_time'],
+            "ner_list_location" : news_item['ner_list_location'],
+            "ner_list_percent" : news_item['ner_list_percent'],
+
+            "generated_keywords" : news_item['generated_keywords'],
+            "generated_summary" : news_item['generated_summary'],
+            "timestamp" : datetime.datetime.now().strftime(DATETIME_FORMAT),
         }
+
+        # Inserting data to Elasticsearch
+        res = es.index(index="newspaper_index", doc_type="news", id=self.id, body=doc)
+
+        # Output can also be saved as csv/json
+        yield doc
     
     def get_location(self, inp):
         inp_list = inp.split('.')

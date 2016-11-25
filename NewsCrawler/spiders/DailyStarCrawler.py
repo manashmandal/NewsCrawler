@@ -10,7 +10,6 @@ from NewsCrawler.credentials_and_configs.stanford_ner_path import STANFORD_CLASS
 
 from scrapy.exceptions import CloseSpider
 
-
 # Using elasticsearch
 from elasticsearch import Elasticsearch
 
@@ -27,8 +26,16 @@ class DailyStarSpider(scrapy.Spider):
         self.start_day, self.start_month, self.start_year = [int(i) for i in start_date.split(delimiter)]
         self.end_day, self.end_month, self.end_year = [int(i) for i in end_date.split(delimiter)]
 
+        #Datetime Format 
+        # Example: '26-11-2016 12:36 AM'
+        self.datetime_format = "%d-%m-%Y %I:%M %p"
+
+
     def start_requests(self):
- 
+        # Saving a copy of start date as begin date
+        self.begin_date = datetime.date(self.start_year, self.start_month, self.start_day)
+        
+        # Will be updated as next date 
         self.start_date = datetime.date(self.start_year , self.start_month , self.start_day)
         self.end_date = datetime.date(self.end_year, self.end_month, self.end_day)
 
@@ -66,7 +73,7 @@ class DailyStarSpider(scrapy.Spider):
 
         # Crawling termination condition
         if self.start_date > self.end_date:
-            raise CloseSpider('Done scraping from '+ self.start_date.__str__() + ' upto ' +  self.end_date.__str__())
+            raise CloseSpider('Done scraping from '+ self.begin_date.__str__() + ' upto ' +  self.end_date.__str__())
 
         try:
             self.logger.info("TRYING")
@@ -77,9 +84,7 @@ class DailyStarSpider(scrapy.Spider):
             self.next_page = self.baseurl + self.start_date.__str__()
             yield scrapy.Request(self.next_page, callback=self.parse)
 
-        
-
-        
+    
 
     def parseNews(self, response):
 
@@ -177,7 +182,7 @@ class DailyStarSpider(scrapy.Spider):
 
             "generated_keywords" : news_item['generated_keywords'],
             "generated_summary" : news_item['generated_summary'],
-            "timestamp" : datetime.datetime.now(),
+            "timestamp" : datetime.datetime.now().strftime(self.datetime_format),
         }
 
         # res = es.index(index="newspaper_index", doc_type='news', id=self.id, body=doc)

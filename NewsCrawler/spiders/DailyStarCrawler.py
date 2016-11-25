@@ -2,11 +2,11 @@ import scrapy
 import logging
 import datetime
 
-from DailyStar.items import DailyStarItem
+from NewsCrawler.items import DailyStarItem
 from newspaper import Article
 
-from DailyStar.Helpers.CustomNERTagger import Tagger
-from DailyStar.credentials_and_configs.stanford_ner_path import STANFORD_CLASSIFIER_PATH, STANFORD_NER_PATH
+from NewsCrawler.Helpers.CustomNERTagger import Tagger
+from NewsCrawler.credentials_and_configs.stanford_ner_path import STANFORD_CLASSIFIER_PATH, STANFORD_NER_PATH
 
 
 # Using elasticsearch

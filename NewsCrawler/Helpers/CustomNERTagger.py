@@ -8,7 +8,7 @@ from newspaper import Article
 #indico API for sentiment analysis
 import indicoio
 
-from DailyStar.credentials_and_configs.keys import INDICOIO_API_KEY
+from NewsCrawler.credentials_and_configs.keys import INDICOIO_API_KEY
 
 class Tagger:
 	def __init__(self, classifier_path, ner_path):

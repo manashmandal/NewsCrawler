@@ -182,7 +182,7 @@ class DailyStarSpider(scrapy.Spider):
 
         res = es.index(index="newspaper_index", doc_type='news', id=self.id, body=doc)
 
-        # Data can be collected as csv also 
+        # Data can be collected as csv/json also 
         yield doc
 
     def getPublishedTime(self, news_item, response):

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Newscrawler by manashmndl</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Newscrawler</h1>
+      <h2 class="project-tagline">News crawler</h2>
+      <a href="https://github.com/manashmndl/NewsCrawler" class="btn">View on GitHub</a>
+      <a href="https://github.com/manashmndl/NewsCrawler/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/manashmndl/NewsCrawler/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="bangladeshi-online-newspaper-crawler" class="anchor" href="#bangladeshi-online-newspaper-crawler" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Bangladeshi Online Newspaper Crawler</h1>
+
+<h2>
+<a id="currently-working-on" class="anchor" href="#currently-working-on" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Currently working on:</h2>
+
+<ul>
+<li><a href="http://en.prothom-alo.com"><del>en.prothom-alo.com</del></a></li>
+<li><a href="http://www.thedailystar.net"><del>thedailystar.net</del></a></li>
+<li><a href="http://archive.dhakatribune.com/archive">dhakatribune.com</a></li>
+</ul>
+
+<h1>
+<a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h1>
+
+<ul>
+<li>Python 2k</li>
+<li>Check <code>requirements.txt</code> file to find out about the dependencies</li>
+</ul>
+
+<h1>
+<a id="how-to" class="anchor" href="#how-to" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to</h1>
+
+<h2>
+<a id="1-installing-the-dependencies" class="anchor" href="#1-installing-the-dependencies" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>1. Installing the dependencies</h2>
+
+<p>Clone the repository, then at the root of the directory of the repo, open a command window/terminal and run this following command. Make sure you have <code>pip</code>.</p>
+
+<pre><code>pip install -r requirements.txt
+</code></pre>
+
+<h2>
+<a id="2-configuring-api-and-stanfordner-path" class="anchor" href="#2-configuring-api-and-stanfordner-path" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>2. Configuring API and StanfordNER Path</h2>
+
+<h2>
+<a id="todo" class="anchor" href="#todo" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>[TODO]</h2>
+
+<h2>
+<a id="3-running-the-spiders" class="anchor" href="#3-running-the-spiders" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>3. Running the spiders</h2>
+
+<p>Open a command window /terminal at the root of the folder. Run the following commands to start scraping.</p>
+
+<h3>
+<a id="4-crawling-instructions" class="anchor" href="#4-crawling-instructions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>4. Crawling Instructions</h3>
+
+<h2>
+<a id="spider-names" class="anchor" href="#spider-names" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Spider Names</h2>
+
+<ul>
+<li>The Daily Star -&gt; <code>dailystar</code>
+</li>
+<li>Prothom Alo -&gt; <code>prothomalo</code>
+</li>
+</ul>
+
+<h4>
+<a id="crawl-em-all" class="anchor" href="#crawl-em-all" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Crawl 'em all</h4>
+
+<p><strong>For Daily Star</strong></p>
+
+<pre><code>scrapy crawl dailystar
+</code></pre>
+
+<p><strong>For Prothom Alo</strong></p>
+
+<pre><code>scrapy crawl prothomalo
+</code></pre>
+
+<h4>
+<a id="crawling-bounded-by-date-time" class="anchor" href="#crawling-bounded-by-date-time" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Crawling bounded by date time</h4>
+
+<p>If I want to scrape all of the news between <code>1st January 2016</code> and <code>1st February 2016</code> my command will look like this, </p>
+
+<p><strong>Daily Star</strong></p>
+
+<pre><code>scrapy crawl dailystar -a start_date="01-01-2016" -a  end_date="01-02-2016"
+</code></pre>
+
+<p><strong>Prothom Alo</strong></p>
+
+<pre><code>scrapy crawl prothomalo -a start_date="01-01-2016" -a  end_date="01-02-2016"
+</code></pre>
+
+<h4>
+<a id="crawling-with-csvjson-output" class="anchor" href="#crawling-with-csvjson-output" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Crawling with CSV/JSON output</h4>
+
+<p>If you want to collect all crawled data in a csv or a json file you can run this command.</p>
+
+<p><strong>Daily Star [<code>csv</code> output]</strong></p>
+
+<pre><code>scrapy crawl dailystar -a start_date="01-01-2016" -a end_date="01-02-2016" -o output_file_name.csv
+</code></pre>
+
+<p><strong>Daily Star [<code>json</code> output]</strong></p>
+
+<pre><code>scrapy crawl dailystar -a start_date="01-01-2016" -a end_date="01-02-2016" -o output_file_name.json
+</code></pre>
+
+<p><strong>Prothom Alo [<code>csv</code> output]</strong></p>
+
+<pre><code>scrapy crawl prothomalo -a start_date="01-01-2016" -a end_date="01-02-2016" -o output_file_name.csv
+</code></pre>
+
+<p><strong>Daily Star [<code>csv</code> output]</strong></p>
+
+<pre><code>scrapy crawl prothomalo -a start_date="01-01-2016" -a end_date="01-02-2016" -o output_file_name.json
+</code></pre>
+
+<h2>
+<a id="5-data-insertion-into-elasticsearch-and-kibana-visualization-instructions" class="anchor" href="#5-data-insertion-into-elasticsearch-and-kibana-visualization-instructions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>5. Data insertion into Elasticsearch and Kibana Visualization Instructions</h2>
+
+<h3>
+<a id="todo-1" class="anchor" href="#todo-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>[TODO]</h3>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/manashmndl/NewsCrawler">Newscrawler</a> is maintained by <a href="https://github.com/manashmndl">manashmndl</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>

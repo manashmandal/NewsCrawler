@@ -6,7 +6,9 @@ from NewsCrawler.items import DailyStarItem
 from newspaper import Article
 
 from NewsCrawler.Helpers.CustomNERTagger import Tagger
+from NewsCrawler.Helpers.date_helper import increase_day_by_one, DATETIME_FORMAT, dateobject_to_split_date
 from NewsCrawler.credentials_and_configs.stanford_ner_path import STANFORD_CLASSIFIER_PATH, STANFORD_NER_PATH
+
 
 from scrapy.exceptions import CloseSpider
 
@@ -18,17 +20,10 @@ es = Elasticsearch()
 class DailyStarSpider(scrapy.Spider):
     name = 'dailystar'
 
-    def increase_day_by_one(self, d):
-        d += datetime.timedelta(days=1)
-        return d
 
     def __init__(self, start_date='01-01-2016', end_date='02-01-2016', delimiter='-'):
-        self.start_day, self.start_month, self.start_year = [int(i) for i in start_date.split(delimiter)]
-        self.end_day, self.end_month, self.end_year = [int(i) for i in end_date.split(delimiter)]
-
-        #Datetime Format 
-        # Example: '26-11-2016 12:36 AM'
-        self.datetime_format = "%d-%m-%Y %I:%M %p"
+        self.start_day, self.start_month, self.start_year = dateobject_to_split_date(start_date, delimiter=delimiter) #[int(i) for i in start_date.split(delimiter)]
+        self.end_day, self.end_month, self.end_year = dateobject_to_split_date(end_date, delimiter=delimiter) #[int(i) for i in end_date.split(delimiter)]
 
 
     def start_requests(self):
@@ -67,7 +62,7 @@ class DailyStarSpider(scrapy.Spider):
             request.meta['news_item'] = news_item
             yield request
 
-        self.start_date = self.increase_day_by_one(self.start_date)
+        self.start_date = increase_day_by_one(self.start_date)
 
         self.next_page = self.baseurl + self.start_date.__str__()
 
@@ -80,7 +75,7 @@ class DailyStarSpider(scrapy.Spider):
             yield scrapy.Request(self.next_page, callback=self.parse)
         except:
             self.logger.info("PROBLEM")
-            self.start_date = self.increase_day_by_one(self.start_date)
+            self.start_date = increase_day_by_one(self.start_date)
             self.next_page = self.baseurl + self.start_date.__str__()
             yield scrapy.Request(self.next_page, callback=self.parse)
 
@@ -182,7 +177,7 @@ class DailyStarSpider(scrapy.Spider):
 
             "generated_keywords" : news_item['generated_keywords'],
             "generated_summary" : news_item['generated_summary'],
-            "timestamp" : datetime.datetime.now().strftime(self.datetime_format),
+            "timestamp" : datetime.datetime.now().strftime(DATETIME_FORMAT),
         }
 
         res = es.index(index="newspaper_index", doc_type='news', id=self.id, body=doc)
@@ -193,7 +188,7 @@ class DailyStarSpider(scrapy.Spider):
     def getPublishedTime(self, news_item, response):
         dt = response.xpath("//meta[@itemprop='datePublished']/@content").extract_first()
         converted_dt = datetime.datetime.strptime( dt.split("+")[0], "%Y-%m-%dT%H:%M:%S")
-        formatted_dt = converted_dt.strftime("%Y-%m-%d %I:%M %p")
+        formatted_dt = converted_dt.strftime(DATETIME_FORMAT)
         news_item['published_date'] = formatted_dt
         return news_item
         

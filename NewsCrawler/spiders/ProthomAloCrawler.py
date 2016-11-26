@@ -20,8 +20,8 @@ class ProthomAloSpider(scrapy.Spider):
     name = 'prothomalo'
 
     def __init__(self, start_date="01-07-2014", end_date="02-07-2014", delimiter='-'):
-        self.start_day, self.start_month, self.start_year = dateobject_to_split_date(start_date)
-        self.end_day, self.end_month, self.end_year = dateobject_to_split_date(end_date)
+        self.start_day, self.start_month, self.start_year = dateobject_to_split_date(start_date, delimiter=delimiter)
+        self.end_day, self.end_month, self.end_year = dateobject_to_split_date(end_date, delimiter=delimiter)
     
     def start_requests(self):
         self.begin_date = datetime.date(self.start_year, self.start_month, self.start_day)
@@ -80,7 +80,7 @@ class ProthomAloSpider(scrapy.Spider):
             self.logger.info("TRYING")
             yield scrapy.Request(self.next_page, callback=self.parse)
         except:
-            self.logger.info("PROBLEM")
+            self.logger.info("PROBLEM OCCURED: INCREASING DAY BY ONE")
             self.start_date = increase_day_by_one(self.start_date)
             self.next_page = self.baseurl + self.start_date.__str__()
             yield scrapy.Request(self.next_page, callback=self.parse)

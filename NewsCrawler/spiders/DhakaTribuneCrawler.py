@@ -19,8 +19,8 @@ class DhakaTribuneSpider(scrapy.Spider):
 	name = 'dhakatribune'
 
 	def __init__(self, start_page=0, end_page=2):
-		self.start_page = start_page
-		self.end_page = end_page
+		self.start_page = int(start_page)
+		self.end_page = int(end_page)
 
 	def start_requests(self):
 		self.begin_page = str(self.start_page)
@@ -34,7 +34,6 @@ class DhakaTribuneSpider(scrapy.Spider):
 
 	
 	def parse(self, response):
-
 		self.main_selection = response.xpath("//div[@class='post-inner']")
 
 		for selection in self.main_selection:
@@ -57,5 +56,14 @@ class DhakaTribuneSpider(scrapy.Spider):
 
 		if self.start_page > self.end_page:
 			raise CloseSpider('Done scraping from page: ' + str(self.begin_page) + ' to ' + str(self.end_page))
+		
+		try:
+			self.logger.info("TRYING")
+			yield scrapy.Request(self.next_page, callback=self.parse)
+		except:
+			self.logger.info("PROBLEM")
+			self.start_page += 1
+			self.next_page = self.base_url + str(self.start_page)
+			yield scrapy.Request(self.next_page, callback=self.parse)
 
 

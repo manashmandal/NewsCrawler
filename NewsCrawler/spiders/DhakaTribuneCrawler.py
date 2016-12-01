@@ -40,12 +40,14 @@ class DhakaTribuneSpider(scrapy.Spider):
 			news_item = DhakaTribuneItem()
 			news_item['newspaper_name'] = 'Dhaka Tribune'
 			news_item['url'] = selection.xpath("header/h2/a/@href").extract_first()
+			news_item['published_date'] = selection.xpath("header/div[1]/text()").extract_first()
 
 			# request = scrapy.Request(news_item['url'], callback=self.parseNews)
 			# request.meta['news_item'] = news_item
 
 			yield {
-				'url' : news_item['url']
+				'url' : news_item['url'],
+				'published date' : news_item['published_date']
 			}
 
 		# increase page count by one

@@ -102,5 +102,11 @@ class DhakaTribuneSpider(scrapy.Spider):
 			# Trying to get info outside the post 
 			news_item['about_reporter'] = response.xpath("//div[@class='author-info']//p[@class='description']/text()").extract_first()
 
+		# Get the news category
+		news_item['category'] = response.xpath("//span[@class='art-tagss']/a/text()").extract_first()
+
+		# Get the breadcrumb
+		news_item['breadcrumb'] = [item.strip() for item in response.xpath("//div[@class='node ']/span/span/text()").extract_first().split('>>') if item != ' ']
+
 		self.debug(news_item)
 

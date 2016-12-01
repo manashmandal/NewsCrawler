@@ -84,5 +84,9 @@ class DhakaTribuneSpider(scrapy.Spider):
 		news_item['image_captions'] = ''.join([text.strip() for text in response.xpath("//ul[@class='singleslider']/li/text()").extract()])
 		news_item['images_credit'] = response.xpath("//ul[@class='singleslider']/li/span/text()").extract_first().replace('Photo- ', '')
 
+		# Getting the Article
+		news_item['article'] = ''.join([text.strip() for text in response.xpath("//div[contains(@class,'article-content')]//p/text()").extract()])
+
+		
 		self.debug(news_item)
 

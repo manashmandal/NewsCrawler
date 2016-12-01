@@ -81,12 +81,26 @@ class DhakaTribuneSpider(scrapy.Spider):
 
 		# Get image urls with captions
 		news_item['images'] = response.xpath("//ul[@class='singleslider']/li/img/@src").extract_first()
-		news_item['image_captions'] = ''.join([text.strip() for text in response.xpath("//ul[@class='singleslider']/li/text()").extract()])
-		news_item['images_credit'] = response.xpath("//ul[@class='singleslider']/li/span/text()").extract_first().replace('Photo- ', '')
+		
+		# If there is an image, try to get the other attributes
+		if news_item['images'] != None:
+			news_item['image_captions'] = ''.join([text.strip() for text in response.xpath("//ul[@class='singleslider']/li/text()").extract()])
+			credit_text = response.xpath("//ul[@class='singleslider']/li/span/text()").extract_first()
+			if credit_text != None:
+				news_item['images_credit'] = credit_text.replace('Photo- ', '')
 
 		# Getting the Article
 		news_item['article'] = ''.join([text.strip() for text in response.xpath("//div[contains(@class,'article-content')]//p/text()").extract()])
 
+		reporter_info_available = True if len(response.xpath("//div[@class='author-info']")) > 0 else False
+
+		if reporter_info_available == False:
+			# Trying to get info from the post
+			news_item['about_reporter'] = response.xpath("//div[contains(@class,'article-content')]//em/text()").extract_first()
 		
+		else:
+			# Trying to get info outside the post 
+			news_item['about_reporter'] = response.xpath("//div[@class='author-info']//p[@class='description']/text()").extract_first()
+
 		self.debug(news_item)
 

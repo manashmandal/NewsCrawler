@@ -107,6 +107,7 @@ class DhakaTribuneItem(Item):
     url = Field()
     excerpt = Field()
     shoulder = Field()
+    images_credit = Field()
 
 
     # NER tags [only unique values]

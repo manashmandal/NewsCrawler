@@ -32,7 +32,7 @@ class DhakaTribuneSpider(scrapy.Spider):
 
 		yield scrapy.Request(self.base_url, self.parse)
 
-	
+	# print out the collected attributes
 	def debug(self, news_item):
 		debug_item = {key: news_item[key] for key in news_item.keys() }
 		self.logger.info(debug_item)
@@ -78,6 +78,11 @@ class DhakaTribuneSpider(scrapy.Spider):
 
 		# Get shoulder if available
 		news_item['shoulder'] = response.xpath("//div[@class='shoulder']/text()").extract_first()
+
+		# Get image urls with captions
+		news_item['images'] = response.xpath("//ul[@class='singleslider']/li/img/@src").extract_first()
+		news_item['image_captions'] = ''.join([text.strip() for text in response.xpath("//ul[@class='singleslider']/li/text()").extract()])
+		news_item['images_credit'] = response.xpath("//ul[@class='singleslider']/li/span/text()").extract_first().replace('Photo- ', '')
 
 		self.debug(news_item)
 

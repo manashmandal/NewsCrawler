@@ -41,7 +41,8 @@ class DhakaTribuneSpider(scrapy.Spider):
 			news_item['newspaper_name'] = 'Dhaka Tribune'
 			news_item['url'] = selection.xpath("header/h2/a/@href").extract_first()
 			news_item['published_date'] = selection.xpath("header/div[1]/text()").extract_first()
-
+			news_item['excerpt'] = selection.xpath("div[1]/p/text()").extract_first().strip()
+			news_item['reporter'] = xpath("header/div[1]/span/a/text()").extract_first()
 			# request = scrapy.Request(news_item['url'], callback=self.parseNews)
 			# request.meta['news_item'] = news_item
 

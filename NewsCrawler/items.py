@@ -106,6 +106,7 @@ class DhakaTribuneItem(Item):
     sentiment = Field()
     url = Field()
     excerpt = Field()
+    shoulder = Field()
 
 
     # NER tags [only unique values]

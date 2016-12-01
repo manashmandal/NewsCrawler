@@ -33,6 +33,11 @@ class DhakaTribuneSpider(scrapy.Spider):
 		yield scrapy.Request(self.base_url, self.parse)
 
 	
+	def debug(self, news_item):
+		debug_item = {key: news_item[key] for key in news_item.keys() }
+		self.logger.info(debug_item)
+
+	
 	def parse(self, response):
 		self.main_selection = response.xpath("//div[@class='post-inner']")
 
@@ -42,14 +47,12 @@ class DhakaTribuneSpider(scrapy.Spider):
 			news_item['url'] = selection.xpath("header/h2/a/@href").extract_first()
 			news_item['published_date'] = selection.xpath("header/div[1]/text()").extract_first()
 			news_item['excerpt'] = selection.xpath("div[1]/p/text()").extract_first().strip()
-			news_item['reporter'] = xpath("header/div[1]/span/a/text()").extract_first()
-			# request = scrapy.Request(news_item['url'], callback=self.parseNews)
-			# request.meta['news_item'] = news_item
+			news_item['reporter'] = selection.xpath("header/div[1]/span/a/text()").extract_first()
+			
+			request = scrapy.Request(news_item['url'], callback=self.parseNews)
+			request.meta['news_item'] = news_item
 
-			yield {
-				'url' : news_item['url'],
-				'published date' : news_item['published_date']
-			}
+			yield request
 
 		# increase page count by one
 		self.start_page += 1
@@ -69,4 +72,12 @@ class DhakaTribuneSpider(scrapy.Spider):
 			self.next_page = self.base_url + str(self.start_page)
 			yield scrapy.Request(self.next_page, callback=self.parse)
 
+	def parseNews(self, response):
+		# Getting the news item
+		news_item = response.meta['news_item']
+
+		# Get shoulder if available
+		news_item['shoulder'] = response.xpath("//div[@class='shoulder']/text()").extract_first()
+
+		self.debug(news_item)
 

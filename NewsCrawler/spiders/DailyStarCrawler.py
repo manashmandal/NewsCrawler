@@ -175,6 +175,7 @@ class DailyStarSpider(scrapy.Spider):
             "sentiment" : news_item['sentiment'],
 
             "ml_tags" : None,
+            "category" : None,
             "shoulder" : None,
             "section" : news_item['newspaper_section'],
             

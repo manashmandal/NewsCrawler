@@ -147,20 +147,26 @@ class ProthomAloSpider(scrapy.Spider):
         news_item['sentiment'] = self.tagger.get_indico_sentiment(news_item['article'])
 
         doc = {
-            "_id" : news_item['_id'],
+            "id" : news_item['_id'],
             "news_url" : news_item['url'],
+            "newspaper" : news_item['newspaper_name'],
             "reporter" : news_item['reporter'],
+            "about_reporter" : None,
             "published" : news_item['published_date'],
-            "last_update" : news_item['published_date'],
+            # "last_update" : news_item['published_date'],
             "title" : news_item['title'],
             "content" : news_item['article'],
-
+            "top_tagline" : None,
+            "bottom_tagline" : None,
             "images" : news_item['images'],
             "image_captions" : news_item['image_captions'],
             "breadcrumb" : news_item['breadcrumb'],
             "sentiment" : news_item['sentiment'],
+            
             "ml_tags" : None,
             "category" : news_item['category'],
+            "shoulder" : None,
+            "section" : news_item['category'],
             
             "ner_person" : news_item['ner_person'],
             "ner_organization" : news_item['ner_organization'],
@@ -178,7 +184,8 @@ class ProthomAloSpider(scrapy.Spider):
 
             "generated_keywords" : news_item['generated_keywords'],
             "generated_summary" : news_item['generated_summary'],
-            "timestamp" : datetime.datetime.now().strftime(DATETIME_FORMAT),
+            "crawled_time" : datetime.datetime.now().strftime(DATETIME_FORMAT),
+            "@timestamp" : datetime.datetime.now().strftime(DATETIME_FORMAT),
         }
 
         # Inserting data to Elasticsearch

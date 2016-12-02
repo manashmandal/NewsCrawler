@@ -112,12 +112,12 @@ scrapy crawl dailystar -a start_date="01-01-2016" -a end_date="01-02-2016" -o ou
 scrapy crawl dailystar -a start_date="01-01-2016" -a end_date="01-02-2016" -o output_file_name.json
 ```
 
-**Dhaka Tribune [`json` output]**
+**Dhaka Tribune [`csv` output]**
 ```
 scrapy crawl dhakatribune -a start_page=0 -a end_page=10 -o output_file_name.csv
 ```
 
-**Dhaka Tribune [`csv` output]**
+**Dhaka Tribune [`json` output]**
 ```
 scrapy crawl dhakatribune -a start_page=0 -a end_page=10 -o output_file_name.json
 ```

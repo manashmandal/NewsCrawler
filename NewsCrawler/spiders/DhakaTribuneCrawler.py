@@ -175,15 +175,13 @@ class DhakaTribuneSpider(scrapy.Spider):
 			"generated_keywords" : news_item['generated_keywords'],
 			"generated_summary" : news_item['generated_summary'],
 			"crawled_time" : news_item['crawl_time'],
-			"timestamp" : news_item['crawl_time'],
+			"@timestamp" : news_item['crawl_time'],
 		}
-
-		self.db.dhakatribune_db.insert_one(doc)
 
 		#Inserting news into eleasticsearch
 		res = es.index(index="newspaper_index", doc_type="news", id=self.id, body=doc)
-
-		self.debug(news_item)
+		self.db.dhakatribune_db.insert_one(doc)
+		# self.debug(news_item)
 
 		yield doc
 

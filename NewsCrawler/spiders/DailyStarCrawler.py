@@ -89,9 +89,11 @@ class DailyStarSpider(scrapy.Spider):
     def parseNews(self, response):
 
         self.id += 1
-        news_item['_id'] = self.id
+        
         news_item = response.meta['news_item']
         
+        news_item['_id'] = self.id
+
         #Getting the Article
         paragraphs = response.xpath("//div[@class='field-body view-mode-teaser']//p/text()").extract()
         news_item['article'] = ''.join([para.strip() for para in paragraphs])

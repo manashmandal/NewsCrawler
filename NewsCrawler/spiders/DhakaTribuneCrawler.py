@@ -21,6 +21,7 @@ class DhakaTribuneSpider(scrapy.Spider):
 	def __init__(self, start_page=0, end_page=2):
 		self.start_page = int(start_page)
 		self.end_page = int(end_page)
+		self.tagger = Tagger(classifier_path=STANFORD_CLASSIFIER_PATH, ner_path=STANFORD_NER_PATH)
 
 	def start_requests(self):
 		self.begin_page = str(self.start_page)
@@ -105,8 +106,26 @@ class DhakaTribuneSpider(scrapy.Spider):
 		# Get the news category
 		news_item['category'] = response.xpath("//span[@class='art-tagss']/a/text()").extract_first()
 
-		# Get the breadcrumb
-		news_item['breadcrumb'] = [item.strip() for item in response.xpath("//div[@class='node ']/span/span/text()").extract_first().split('>>') if item != ' ']
+		# Checking if breadcrumb exists
+		breadcrumb = response.xpath("//div[@class='node ']/span/span/text()").extract_first()
 
+		# Get the breadcrumb
+		if breadcrumb != None:
+			news_item['breadcrumb'] = [item.strip() for item in breadcrumb.split('>>') if item != ' ']
+
+		# #Applying NLP from newspaper package
+		# article = Article(url=news_item['url'])
+		# article.download()
+		# article.parse()
+		# article.nlp()
+
+		# news_item['generated_summary'] = article.summary
+		# news_item['generated_keywords'] = article.keywords
+
+		# # Tagging the article
+		# try:
+		# 	self.tagger.entity_group(news_item['article'])
+		# except:
+		# 	self.log.info("NER CRASHED")
 		self.debug(news_item)
 

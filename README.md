@@ -1,10 +1,10 @@
 # Bangladeshi Online Newspaper Crawler
 
-## Currently working on:
+## Done
 
 * [~~en.prothom-alo.com~~](http://en.prothom-alo.com)
 * [~~thedailystar.net~~](http://www.thedailystar.net)
-* [dhakatribune.com](http://archive.dhakatribune.com/archive)
+* [~~dhakatribune.com~~](http://archive.dhakatribune.com/archive)
 
 # Requirements
 
@@ -135,4 +135,73 @@ scrapy crawl prothomalo -a start_date="01-01-2016" -a end_date="01-02-2016" -o o
 
 ## 5. Data insertion into Elasticsearch and Kibana Visualization Instructions
 
-### [TODO]
+* Download and extract Kibana and Elasticsearch
+
+### Starting MongoDB Service
+
+* Open CMD/Terminal then type the following command 
+
+```
+mongod 
+```
+
+It should give the following output 
+
+```
+2016-12-03T03:00:38.986+0600 I CONTROL  [initandlisten] MongoDB starting : pid=7204 port=27017 dbpath=C:\data\db\ 64-bit host=DESKTOP-4PR51E6
+2016-12-03T03:00:38.986+0600 I CONTROL  [initandlisten] targetMinOS: Windows 7/Windows Server 2008 R2
+2016-12-03T03:00:38.987+0600 I CONTROL  [initandlisten] db version v3.2.7
+.............
+.............
+2016-12-03T03:00:39.543+0600 I NETWORK  [HostnameCanonicalizationWorker] Starting hostname canonicalization worker
+2016-12-03T03:00:39.543+0600 I FTDC     [initandlisten] Initializing full-time diagnostic data capture with directory 'C:/data/db/diagnostic.data'
+2016-12-03T03:00:39.558+0600 I NETWORK  [initandlisten] waiting for connections on port 27017
+```
+
+Now you're all set to use the MongoDB service! 
+
+### MongoDB Troubleshooting
+
+* Couldn't find the path 
+
+Add the `MongoDB\Server\3.2\bin` folder to your system path and then try again.
+
+* ` Data directory C:\data\db\ not found., terminating` 
+
+Quite simple, all you need to do is to create a `db` folder there and you're good to go.
+
+### Starting Elasticsearch Server 
+
+Go to `elasticsearch-5.0.0\bin` folder then run the program `elasticsearch.bat` on windows. 
+
+### Starting Kibana Server
+
+Go to `kibana-5.0.0-windows-x86\bin` folder and run the program `kibana.bat` on windows.
+
+> All of your local server and services should be working properly.
+> Start crawling using the scrapy crawl command and the data will be automatically inserted to `mongo database`, `elasticsearch`, and you can get the output as either `csv` or `json` format.
+> You must start `elasticsearch` before `kibana`
+
+### Configuring Kibana for data acquisition and Visualization
+
+Kibana server will listen to `localhost:5601` by default. So open the url in your browser. 
+
+* Go to `Management`
+
+![management](https://github.com/manashmndl/NewsCrawler/blob/master/screenshots/doc1.png?raw=true)
+
+* Click on `Index Patterns` and then `Add New`
+
+![indexpattern](https://github.com/manashmndl/NewsCrawler/blob/master/screenshots/doc2.png?raw=true)
+
+* Remove tick from `Index contains time-based events` and  write `news*` on the **Index name or pattern** text input. Then click `Create`
+
+![index](https://github.com/manashmndl/NewsCrawler/blob/master/screenshots/doc3.png?raw=true)
+
+* Then go to `Discover` and select `news*` index 
+
+![selection](https://github.com/manashmndl/NewsCrawler/blob/master/screenshots/doc4.gif?raw=true)
+
+
+
+

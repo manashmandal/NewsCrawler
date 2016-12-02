@@ -11,6 +11,7 @@ from scrapy import Item, Field
 class DailyStarItem(Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
+    _id = Field()
     category = Field()
     newspaper_section = Field()
     reporter = Field()
@@ -55,6 +56,7 @@ class DailyStarItem(Item):
 
 
 class ProthomAloItem(Item):
+    _id = Field()
     category = Field()
     newspaper_name = Field()
     reporter = Field()

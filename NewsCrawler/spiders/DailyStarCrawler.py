@@ -12,8 +12,9 @@ from NewsCrawler.credentials_and_configs.stanford_ner_path import STANFORD_CLASS
 
 from scrapy.exceptions import CloseSpider
 
-# Using elasticsearch
+# Using elasticsearch and mongo
 from elasticsearch import Elasticsearch
+from pymongo import MongoClient
 
 es = Elasticsearch()
 
@@ -40,6 +41,10 @@ class DailyStarSpider(scrapy.Spider):
         self.tagger = Tagger(classifier_path=STANFORD_CLASSIFIER_PATH, ner_path=STANFORD_NER_PATH)
 
         self.id = 0
+        
+        # Creating mongo client
+        client = MongoClient()
+        self.db = client.dailystar_db
 
         yield scrapy.Request(self.url, self.parse)
 
@@ -84,7 +89,7 @@ class DailyStarSpider(scrapy.Spider):
     def parseNews(self, response):
 
         self.id += 1
-        
+        news_item['_id'] = self.id
         news_item = response.meta['news_item']
         
         #Getting the Article
@@ -152,6 +157,7 @@ class DailyStarSpider(scrapy.Spider):
         news_item['crawl_time'] = datetime.datetime.now().strftime(DATETIME_FORMAT)
 
         doc = {
+            "_id" : news_item['_id'],
             "news_url" : news_item['url'],
             "reporter" : news_item['reporter'],
             "published" : news_item['published_date'],
@@ -186,8 +192,10 @@ class DailyStarSpider(scrapy.Spider):
             "timestamp" : news_item['crawl_time'],
         }
 
+        #inserting data into Elasticsearch
         res = es.index(index="newspaper_index", doc_type='news', id=self.id, body=doc)
-
+        #Inserting data into mongodb 
+        self.db.dailystar_db.insert_one(doc)
         # Data can be collected as csv/json also 
         yield doc
 

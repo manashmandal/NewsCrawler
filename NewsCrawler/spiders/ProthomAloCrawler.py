@@ -13,7 +13,7 @@ from NewsCrawler.Helpers.date_helper import dateobject_to_split_date, DATETIME_F
 from scrapy.exceptions import CloseSpider
 
 from elasticsearch import Elasticsearch
-
+from pymongo import MongoClient
 es = Elasticsearch()
 
 class ProthomAloSpider(scrapy.Spider):
@@ -37,6 +37,8 @@ class ProthomAloSpider(scrapy.Spider):
         self.tagger = Tagger(classifier_path=STANFORD_CLASSIFIER_PATH, ner_path=STANFORD_NER_PATH)
 
         self.id = 0
+        client = MongoClient()
+        self.db = client.prothomalo_db
 
         yield scrapy.Request(self.url, self.parse)
     
@@ -89,9 +91,12 @@ class ProthomAloSpider(scrapy.Spider):
     def parseNews(self, response):
         self.logger.info("TRYING")
         self.id += 1
-
+        
         # Retreiving news item
         news_item = response.meta['news_item']
+
+        # Inserting id
+        news_item['_id'] = self.id
 
         # Currently detects one image
         news_item['images'] = self.get_image_url(response.xpath("//img/@src").extract())
@@ -142,6 +147,7 @@ class ProthomAloSpider(scrapy.Spider):
         news_item['sentiment'] = self.tagger.get_indico_sentiment(news_item['article'])
 
         doc = {
+            "_id" : news_item['_id'],
             "news_url" : news_item['url'],
             "reporter" : news_item['reporter'],
             "published" : news_item['published_date'],
@@ -177,6 +183,8 @@ class ProthomAloSpider(scrapy.Spider):
 
         # Inserting data to Elasticsearch
         # res = es.index(index="newspaper_index", doc_type="news", id=self.id, body=doc)
+        # Inserting data into mongodb
+        self.db.prothomalo_db.insert_one(doc)
 
         # Output can also be saved as csv/json
         yield doc

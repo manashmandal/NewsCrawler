@@ -26,7 +26,8 @@ class DhakaTribuneSpider(scrapy.Spider):
 		self.end_page = int(end_page)
 		self.tagger = Tagger(classifier_path=STANFORD_CLASSIFIER_PATH, ner_path=STANFORD_NER_PATH)
 		client = MongoClient()
-		self.db = client.news_db
+		# Create a dhakatribune_db database using the MongoDB Console
+		self.db = client.dhakatribune_db
 
 	def start_requests(self):
 		self.begin_page = str(self.start_page)
@@ -176,7 +177,7 @@ class DhakaTribuneSpider(scrapy.Spider):
 			"timestamp" : news_item['crawl_time'],
 		}
 
-		self.db.news_db.insert_one(doc)
+		self.db.dhakatribune_db.insert_one(doc)
 
 		self.debug(news_item)
 

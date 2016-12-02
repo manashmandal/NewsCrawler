@@ -114,18 +114,18 @@ class DhakaTribuneSpider(scrapy.Spider):
 			news_item['breadcrumb'] = [item.strip() for item in breadcrumb.split('>>') if item != ' ']
 
 		# #Applying NLP from newspaper package
-		# article = Article(url=news_item['url'])
-		# article.download()
-		# article.parse()
-		# article.nlp()
+		article = Article(url=news_item['url'])
+		article.download()
+		article.parse()
+		article.nlp()
 
-		# news_item['generated_summary'] = article.summary
-		# news_item['generated_keywords'] = article.keywords
+		news_item['generated_summary'] = article.summary
+		news_item['generated_keywords'] = article.keywords
 
-		# # Tagging the article
-		# try:
-		# 	self.tagger.entity_group(news_item['article'])
-		# except:
-		# 	self.log.info("NER CRASHED")
+		# Tagging the article
+		try:
+			self.tagger.entity_group(news_item['article'])
+		except:
+			self.logger.info("NER CRASHED")
 		self.debug(news_item)
 

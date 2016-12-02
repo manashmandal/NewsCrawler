@@ -114,7 +114,11 @@ class DhakaTribuneSpider(scrapy.Spider):
 		if breadcrumb != None:
 			news_item['breadcrumb'] = [item.strip() for item in breadcrumb.split('>>') if item != ' ']
 
-		self.tag_it(news_item)
+		# Get current time 
+		news_item['crawl_time'] = datetime.datetime.now().strftime(DATETIME_FORMAT)
+
+
+		# self.tag_it(news_item)
 
 		self.debug(news_item)
 

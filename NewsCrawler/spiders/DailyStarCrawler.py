@@ -146,6 +146,8 @@ class DailyStarSpider(scrapy.Spider):
 
         news_item['sentiment'] = self.tagger.get_indico_sentiment(news_item['article'])
 
+        news_item['crawl_time'] = datetime.datetime.now().strftime(DATETIME_FORMAT)
+
         doc = {
             "news_url" : news_item['url'],
             "reporter" : news_item['reporter'],
@@ -177,7 +179,8 @@ class DailyStarSpider(scrapy.Spider):
 
             "generated_keywords" : news_item['generated_keywords'],
             "generated_summary" : news_item['generated_summary'],
-            "timestamp" : datetime.datetime.now().strftime(DATETIME_FORMAT),
+            "crawled_time" : news_item['crawl_time'],
+            "timestamp" : news_item['crawl_time'],
         }
 
         res = es.index(index="newspaper_index", doc_type='news', id=self.id, body=doc)

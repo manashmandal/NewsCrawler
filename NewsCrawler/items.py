@@ -27,6 +27,7 @@ class DailyStarItem(Item):
     bottom_tag_line = Field()
     image_captions = Field()
     newspaper_name = Field()
+    crawl_time = Field()
 
     ml_tags = Field()
     sentiment = Field()
@@ -68,6 +69,7 @@ class ProthomAloItem(Item):
     image_captions = Field()
     sentiment = Field()
     url = Field()
+    crawl_time = Field()
 
     # NER tags [only unique values]
     ner_person = Field()
@@ -109,6 +111,7 @@ class DhakaTribuneItem(Item):
     shoulder = Field()
     images_credit = Field()
     about_reporter = Field()
+    crawl_time = Field()
 
 
     # NER tags [only unique values]

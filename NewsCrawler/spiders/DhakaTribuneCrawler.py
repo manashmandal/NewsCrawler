@@ -48,6 +48,8 @@ class DhakaTribuneSpider(scrapy.Spider):
 		self.main_selection = response.xpath("//div[@class='post-inner']")
 
 		for selection in self.main_selection:
+			self.id += 1
+
 			news_item = DhakaTribuneItem()
 			news_item['newspaper_name'] = 'Dhaka Tribune'
 			news_item['url'] = selection.xpath("header/h2/a/@href").extract_first()
@@ -55,7 +57,7 @@ class DhakaTribuneSpider(scrapy.Spider):
 			news_item['published_date'] = selection.xpath("header/div[1]/text()").extract_first()
 			news_item['excerpt'] = selection.xpath("div[1]/p/text()").extract_first().strip()
 			news_item['reporter'] = selection.xpath("header/div[1]/span/a/text()").extract_first()
-			
+			news_item['_id'] = self.id
 			request = scrapy.Request(news_item['url'], callback=self.parseNews)
 			request.meta['news_item'] = news_item
 
@@ -95,6 +97,9 @@ class DhakaTribuneSpider(scrapy.Spider):
 			credit_text = response.xpath("//ul[@class='singleslider']/li/span/text()").extract_first()
 			if credit_text != None:
 				news_item['images_credit'] = credit_text.replace('Photo- ', '')
+		else:
+			news_item['image_captions'] = None
+			news_item['images_credit'] = None
 
 		# Getting the Article
 		news_item['article'] = ''.join([text.strip() for text in response.xpath("//div[contains(@class,'article-content')]//p/text()").extract()])
@@ -123,13 +128,16 @@ class DhakaTribuneSpider(scrapy.Spider):
 		news_item['crawl_time'] = datetime.datetime.now().strftime(DATETIME_FORMAT)
 
 		news_item['ml_tags'] = None
-		news_item['sentiment'] = None
+		try:
+			news_item['sentiment'] = self.tagger.get_indico_sentiment(news_item['article'])
+		except:
+			news_item['sentiment'] = None
 
 		self.tag_it(news_item)
 
 		# Creating the doc
 		doc = {
-			"id": news_item[]
+			"_id": news_item['_id'],
             "news_url" : news_item['url'],
             "reporter" : news_item['reporter'],
 			"about_reporter" : news_item['about_reporter'],

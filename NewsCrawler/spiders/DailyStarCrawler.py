@@ -144,8 +144,11 @@ class DailyStarSpider(scrapy.Spider):
         # ML tags
         news_item['ml_tags'] = None
 
-        news_item['sentiment'] = self.tagger.get_indico_sentiment(news_item['article'])
-
+        try:
+            news_item['sentiment'] = self.tagger.get_indico_sentiment(news_item['article'])
+        except:
+            news_item['sentiment'] = None
+        
         news_item['crawl_time'] = datetime.datetime.now().strftime(DATETIME_FORMAT)
 
         doc = {

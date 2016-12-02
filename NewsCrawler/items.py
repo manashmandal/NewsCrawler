@@ -93,6 +93,7 @@ class ProthomAloItem(Item):
 
 
 class DhakaTribuneItem(Item):
+    _id = Field()
     category = Field()
     newspaper_name = Field()
     reporter = Field()

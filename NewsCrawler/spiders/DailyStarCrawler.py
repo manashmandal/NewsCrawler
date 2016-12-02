@@ -161,7 +161,9 @@ class DailyStarSpider(scrapy.Spider):
         doc = {
             "id" : news_item['_id'],
             "news_url" : news_item['url'],
+            "newspaper" : news_item['newspaper_name'],
             "reporter" : news_item['reporter'],
+            "about_reporter" : None,
             "published" : news_item['published_date'],
             "title" : news_item['title'],
             "content" : news_item['article'],
@@ -171,7 +173,9 @@ class DailyStarSpider(scrapy.Spider):
             "image_captions" : news_item['image_captions'],
             "breadcrumb" : news_item['breadcrumb'],
             "sentiment" : news_item['sentiment'],
+
             "ml_tags" : None,
+            "shoulder" : None,
             "section" : news_item['newspaper_section'],
             
             "ner_person" : news_item['ner_person'],

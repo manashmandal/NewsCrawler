@@ -149,6 +149,8 @@ class DhakaTribuneSpider(scrapy.Spider):
 			"published" : news_item['published_date'],
 			"title" : news_item['title'],
 			"content" : news_item['article'],
+			"top_tagline" : None,
+			"bottom_tagline": None,
 			"images" : news_item['images'],
 			"image_captions" : news_item['image_captions'],
 			"breadcrumb" : news_item['breadcrumb'],

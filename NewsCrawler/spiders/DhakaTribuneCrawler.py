@@ -31,6 +31,9 @@ class DhakaTribuneSpider(scrapy.Spider):
 	def start_requests(self):
 		self.begin_page = str(self.start_page)
 
+		# Removing the data when beginning crawling
+		# self.db.news_db.delete_many({})
+
 		#Begin scraping from here
 		self.base_url = 'http://archive.dhakatribune.com/archive?page=' + str(self.start_page)
 
@@ -120,10 +123,11 @@ class DhakaTribuneSpider(scrapy.Spider):
 		# Checking if breadcrumb exists
 		breadcrumb = response.xpath("//div[@class='node ']/span/span/text()").extract_first()
 
+		news_item['breadcrumb'] = None
 		# Get the breadcrumb
 		if breadcrumb != None:
 			news_item['breadcrumb'] = [item.strip() for item in breadcrumb.split('>>') if item != ' ']
-
+		
 		# Get current time 
 		news_item['crawl_time'] = datetime.datetime.now().strftime(DATETIME_FORMAT)
 
@@ -138,38 +142,39 @@ class DhakaTribuneSpider(scrapy.Spider):
 		# Creating the doc
 		doc = {
 			"_id": news_item['_id'],
-            "news_url" : news_item['url'],
-            "reporter" : news_item['reporter'],
+			"news_url" : news_item['url'],
+			"newspaper": news_item['newspaper_name'],
+			"reporter" : news_item['reporter'],
 			"about_reporter" : news_item['about_reporter'],
-            "published" : news_item['published_date'],
-            "title" : news_item['title'],
-            "content" : news_item['article'],
-            "images" : news_item['images'],
-            "image_captions" : news_item['image_captions'],
-            "breadcrumb" : news_item['breadcrumb'],
-            "sentiment" : news_item['sentiment'],
-            "ml_tags" : None,
-            "shoulder" : news_item['shoulder'],
-            
-            "ner_person" : news_item['ner_person'],
-            "ner_organization" : news_item['ner_organization'],
-            "ner_money" : news_item['ner_money'],
-            "ner_time" : news_item['ner_time'],
-            "ner_location" : news_item['ner_location'],
-            "ner_percent" : news_item['ner_percent'],
+			"published" : news_item['published_date'],
+			"title" : news_item['title'],
+			"content" : news_item['article'],
+			"images" : news_item['images'],
+			"image_captions" : news_item['image_captions'],
+			"breadcrumb" : news_item['breadcrumb'],
+			"sentiment" : news_item['sentiment'],
+			"ml_tags" : None,
+			"shoulder" : news_item['shoulder'],
+			
+			"ner_person" : news_item['ner_person'],
+			"ner_organization" : news_item['ner_organization'],
+			"ner_money" : news_item['ner_money'],
+			"ner_time" : news_item['ner_time'],
+			"ner_location" : news_item['ner_location'],
+			"ner_percent" : news_item['ner_percent'],
 
-            "ner_list_person" : news_item['ner_list_person'],
-            "ner_list_organization" : news_item['ner_list_organization'],
-            "ner_list_money" : news_item['ner_list_money'],
-            "ner_list_time" : news_item['ner_list_time'],
-            "ner_list_location" : news_item['ner_list_location'],
-            "ner_list_percent" : news_item['ner_list_percent'],
+			"ner_list_person" : news_item['ner_list_person'],
+			"ner_list_organization" : news_item['ner_list_organization'],
+			"ner_list_money" : news_item['ner_list_money'],
+			"ner_list_time" : news_item['ner_list_time'],
+			"ner_list_location" : news_item['ner_list_location'],
+			"ner_list_percent" : news_item['ner_list_percent'],
 
-            "generated_keywords" : news_item['generated_keywords'],
-            "generated_summary" : news_item['generated_summary'],
-            "crawled_time" : news_item['crawl_time'],
-            "timestamp" : news_item['crawl_time'],
-        }
+			"generated_keywords" : news_item['generated_keywords'],
+			"generated_summary" : news_item['generated_summary'],
+			"crawled_time" : news_item['crawl_time'],
+			"timestamp" : news_item['crawl_time'],
+		}
 
 		self.db.news_db.insert_one(doc)
 

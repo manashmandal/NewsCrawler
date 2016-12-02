@@ -182,7 +182,7 @@ class ProthomAloSpider(scrapy.Spider):
         }
 
         # Inserting data to Elasticsearch
-        # res = es.index(index="newspaper_index", doc_type="news", id=self.id, body=doc)
+        res = es.index(index="newspaper_index", doc_type="news", id=self.id, body=doc)
         # Inserting data into mongodb
         self.db.prothomalo_db.insert_one(doc)
 

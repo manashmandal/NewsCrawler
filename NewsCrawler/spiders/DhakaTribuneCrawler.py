@@ -17,7 +17,6 @@ from pymongo import MongoClient
 es = Elasticsearch()
 
 
-
 class DhakaTribuneSpider(scrapy.Spider):
 	name = 'dhakatribune'
 
@@ -142,7 +141,7 @@ class DhakaTribuneSpider(scrapy.Spider):
 
 		# Creating the doc
 		doc = {
-			"_id": news_item['_id'],
+			"id": news_item['_id'],
 			"news_url" : news_item['url'],
 			"newspaper": news_item['newspaper_name'],
 			"reporter" : news_item['reporter'],
@@ -179,7 +178,12 @@ class DhakaTribuneSpider(scrapy.Spider):
 
 		self.db.dhakatribune_db.insert_one(doc)
 
+		#Inserting news into eleasticsearch
+		res = es.index(index="newspaper_index", doc_type="news", id=self.id, body=doc)
+
 		self.debug(news_item)
+
+		yield doc
 
 	def tag_it(self, news_item):
 		# #Applying NLP from newspaper package

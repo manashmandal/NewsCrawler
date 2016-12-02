@@ -15,6 +15,7 @@ from elasticsearch import Elasticsearch
 
 es = Elasticsearch()
 
+
 class DhakaTribuneSpider(scrapy.Spider):
 	name = 'dhakatribune'
 
@@ -113,6 +114,11 @@ class DhakaTribuneSpider(scrapy.Spider):
 		if breadcrumb != None:
 			news_item['breadcrumb'] = [item.strip() for item in breadcrumb.split('>>') if item != ' ']
 
+		self.tag_it(news_item)
+
+		self.debug(news_item)
+
+	def tag_it(self, news_item):
 		# #Applying NLP from newspaper package
 		article = Article(url=news_item['url'])
 		article.download()
@@ -127,5 +133,18 @@ class DhakaTribuneSpider(scrapy.Spider):
 			self.tagger.entity_group(news_item['article'])
 		except:
 			self.logger.info("NER CRASHED")
-		self.debug(news_item)
 
+		news_item['ner_person'] = self.tagger.PERSON
+		news_item['ner_organization'] = self.tagger.ORGANIZATION
+		news_item['ner_time'] = self.tagger.TIME
+		news_item['ner_percent'] = self.tagger.PERCENT
+		news_item['ner_money'] = self.tagger.MONEY
+		news_item['ner_location'] = self.tagger.LOCATION
+
+		# Contains all occurances
+		news_item['ner_list_person'] = self.tagger.LIST_PERSON
+		news_item['ner_list_organization'] = self.tagger.LIST_ORGANIZATION
+		news_item['ner_list_time'] = self.tagger.LIST_TIME
+		news_item['ner_list_percent'] = self.tagger.LIST_PERCENT
+		news_item['ner_list_money'] = self.tagger.LIST_MONEY
+		news_item['ner_list_location'] = self.tagger.LIST_LOCATION

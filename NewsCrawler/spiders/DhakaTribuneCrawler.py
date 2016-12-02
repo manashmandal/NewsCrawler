@@ -12,8 +12,10 @@ from NewsCrawler.credentials_and_configs.stanford_ner_path import STANFORD_CLASS
 from scrapy.exceptions import CloseSpider
 
 from elasticsearch import Elasticsearch
+from pymongo import MongoClient
 
 es = Elasticsearch()
+
 
 
 class DhakaTribuneSpider(scrapy.Spider):
@@ -23,6 +25,8 @@ class DhakaTribuneSpider(scrapy.Spider):
 		self.start_page = int(start_page)
 		self.end_page = int(end_page)
 		self.tagger = Tagger(classifier_path=STANFORD_CLASSIFIER_PATH, ner_path=STANFORD_NER_PATH)
+		client = MongoClient()
+		self.db = client.news_db
 
 	def start_requests(self):
 		self.begin_page = str(self.start_page)
@@ -47,6 +51,7 @@ class DhakaTribuneSpider(scrapy.Spider):
 			news_item = DhakaTribuneItem()
 			news_item['newspaper_name'] = 'Dhaka Tribune'
 			news_item['url'] = selection.xpath("header/h2/a/@href").extract_first()
+			news_item['title'] = selection.xpath("header/h2/a/text()").extract_first()
 			news_item['published_date'] = selection.xpath("header/div[1]/text()").extract_first()
 			news_item['excerpt'] = selection.xpath("div[1]/p/text()").extract_first().strip()
 			news_item['reporter'] = selection.xpath("header/div[1]/span/a/text()").extract_first()
@@ -117,8 +122,48 @@ class DhakaTribuneSpider(scrapy.Spider):
 		# Get current time 
 		news_item['crawl_time'] = datetime.datetime.now().strftime(DATETIME_FORMAT)
 
+		news_item['ml_tags'] = None
+		news_item['sentiment'] = None
 
-		# self.tag_it(news_item)
+		self.tag_it(news_item)
+
+		# Creating the doc
+		doc = {
+			"id": news_item[]
+            "news_url" : news_item['url'],
+            "reporter" : news_item['reporter'],
+			"about_reporter" : news_item['about_reporter'],
+            "published" : news_item['published_date'],
+            "title" : news_item['title'],
+            "content" : news_item['article'],
+            "images" : news_item['images'],
+            "image_captions" : news_item['image_captions'],
+            "breadcrumb" : news_item['breadcrumb'],
+            "sentiment" : news_item['sentiment'],
+            "ml_tags" : None,
+            "shoulder" : news_item['shoulder'],
+            
+            "ner_person" : news_item['ner_person'],
+            "ner_organization" : news_item['ner_organization'],
+            "ner_money" : news_item['ner_money'],
+            "ner_time" : news_item['ner_time'],
+            "ner_location" : news_item['ner_location'],
+            "ner_percent" : news_item['ner_percent'],
+
+            "ner_list_person" : news_item['ner_list_person'],
+            "ner_list_organization" : news_item['ner_list_organization'],
+            "ner_list_money" : news_item['ner_list_money'],
+            "ner_list_time" : news_item['ner_list_time'],
+            "ner_list_location" : news_item['ner_list_location'],
+            "ner_list_percent" : news_item['ner_list_percent'],
+
+            "generated_keywords" : news_item['generated_keywords'],
+            "generated_summary" : news_item['generated_summary'],
+            "crawled_time" : news_item['crawl_time'],
+            "timestamp" : news_item['crawl_time'],
+        }
+
+		self.db.news_db.insert_one(doc)
 
 		self.debug(news_item)
 

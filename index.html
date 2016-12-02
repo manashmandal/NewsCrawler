@@ -1,25 +1,52 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html>
   <head>
-    <meta charset="UTF-8">
-    <title>Newscrawler by manashmndl</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
-  </head>
-  <body>
-    <section class="page-header">
-      <h1 class="project-name">Newscrawler</h1>
-      <h2 class="project-tagline">News crawler</h2>
-      <a href="https://github.com/manashmndl/NewsCrawler" class="btn">View on GitHub</a>
-      <a href="https://github.com/manashmndl/NewsCrawler/zipball/master" class="btn">Download .zip</a>
-      <a href="https://github.com/manashmndl/NewsCrawler/tarball/master" class="btn">Download .tar.gz</a>
-    </section>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=640">
 
-    <section class="main-content">
-      <h1>
+    <link rel="stylesheet" href="stylesheets/core.css" media="screen">
+    <link rel="stylesheet" href="stylesheets/mobile.css" media="handheld, only screen and (max-device-width:640px)">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+
+    <script type="text/javascript" src="javascripts/modernizr.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="javascripts/headsmart.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $('#main_content').headsmart()
+      })
+    </script>
+    <title>Newscrawler by manashmndl</title>
+  </head>
+
+  <body>
+    <a id="forkme_banner" href="https://github.com/manashmndl/NewsCrawler">View on GitHub</a>
+    <div class="shell">
+
+      <header>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <h1>Newscrawler</h1>
+            <h2>News crawler</h2>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+      </header>
+
+      <section id="downloads">
+        <span class="inner">
+          <a href="https://github.com/manashmndl/NewsCrawler/zipball/master" class="zip"><em>download</em> .ZIP</a><a href="https://github.com/manashmndl/NewsCrawler/tarball/master" class="tgz"><em>download</em> .TGZ</a>
+        </span>
+      </section>
+
+
+      <span class="banner-fix"></span>
+
+
+      <section id="main_content">
+        <h1>
 <a id="bangladeshi-online-newspaper-crawler" class="anchor" href="#bangladeshi-online-newspaper-crawler" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Bangladeshi Online Newspaper Crawler</h1>
 
 <h2>
@@ -43,6 +70,21 @@
 <a id="how-to" class="anchor" href="#how-to" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to</h1>
 
 <h2>
+<a id="0-before-beginning" class="anchor" href="#0-before-beginning" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>0. Before Beginning</h2>
+
+<h3>
+<a id="1-download-and-install-mongodb" class="anchor" href="#1-download-and-install-mongodb" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>1. <a href="https://docs.mongodb.com/v3.2/installation/">Download and Install MongoDB</a>
+</h3>
+
+<h3>
+<a id="2-download-stanford-ner-and-configure-it" class="anchor" href="#2-download-stanford-ner-and-configure-it" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>2. <a href="http://nlp.stanford.edu/software/CRF-NER.shtml">Download Stanford NER</a> and <a href="https://blog.manash.me/configuring-stanford-parser-and-stanford-ner-tagger-with-nltk-in-python-on-windows-f685483c374a">configure it</a>
+</h3>
+
+<h3>
+<a id="3-download-and-configure-elasticsearch--kibana" class="anchor" href="#3-download-and-configure-elasticsearch--kibana" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>3. <a href="https://www.elastic.co/guide/index.html">Download and configure Elasticsearch &amp; Kibana</a>
+</h3>
+
+<h2>
 <a id="1-installing-the-dependencies" class="anchor" href="#1-installing-the-dependencies" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>1. Installing the dependencies</h2>
 
 <p>Clone the repository, then at the root of the directory of the repo, open a command window/terminal and run this following command. Make sure you have <code>pip</code>.</p>
@@ -53,13 +95,31 @@
 <h2>
 <a id="2-configuring-api-and-stanfordner-path" class="anchor" href="#2-configuring-api-and-stanfordner-path" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>2. Configuring API and StanfordNER Path</h2>
 
-<h2>
-<a id="todo" class="anchor" href="#todo" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>[TODO]</h2>
+<h3>
+<a id="indicoio-api-configuration" class="anchor" href="#indicoio-api-configuration" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Indicoio API Configuration</h3>
+
+<p>At <code>credentials_and_configs/keys.py</code> file, change the API key. <strong><a href="https://indico.io/">You can create an account here and get your own API Key</a></strong>.</p>
+
+<p>Example,</p>
+
+<pre><code>INDICOIO_API_KEY = '8ee6432e7dc137740c40c0af8d7XXXXXX' # Replace the value with your own API Key
+</code></pre>
+
+<h3>
+<a id="stanfordner-path" class="anchor" href="#stanfordner-path" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>StanfordNER Path</h3>
+
+<p>At <code>credentials_and_configs/stanford_ner_path.py</code> file, change the paths according to the downloaded <code>NER</code> and <code>CLASSIFIER</code> paths.</p>
+
+<p>Example,</p>
+
+<pre><code>STANFORD_NER_PATH = 'C:\StanfordParser\stanford-ner-2015-12-09\stanford-ner.jar' #Insert your path here
+STANFORD_CLASSIFIER_PATH = 'C:\StanfordParser\stanford-ner-2015-12-09\classifiers\english.all.3class.distsim.crf.ser.gz' # Insert your path here
+</code></pre>
 
 <h2>
 <a id="3-running-the-spiders" class="anchor" href="#3-running-the-spiders" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>3. Running the spiders</h2>
 
-<p>Open a command window /terminal at the root of the folder. Run the following commands to start scraping.</p>
+<p>Open a command <code>window / terminal</code> at the <code>root</code> of the folder. Run the following commands to start scraping.</p>
 
 <h3>
 <a id="4-crawling-instructions" class="anchor" href="#4-crawling-instructions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>4. Crawling Instructions</h3>
@@ -71,6 +131,8 @@
 <li>The Daily Star -&gt; <code>dailystar</code>
 </li>
 <li>Prothom Alo -&gt; <code>prothomalo</code>
+</li>
+<li>Dhaka Tribune -&gt; <code>dhakatribune</code>
 </li>
 </ul>
 
@@ -85,6 +147,11 @@
 <p><strong>For Prothom Alo</strong></p>
 
 <pre><code>scrapy crawl prothomalo
+</code></pre>
+
+<p><strong>For Dhaka Tribune</strong></p>
+
+<pre><code>scrapy crawl dhakatribune
 </code></pre>
 
 <h4>
@@ -103,6 +170,14 @@
 </code></pre>
 
 <h4>
+<a id="crawling-dhaka-tribune-by-page-range" class="anchor" href="#crawling-dhaka-tribune-by-page-range" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Crawling Dhaka Tribune by page range</h4>
+
+<p><strong>Dhaka Tribune</strong></p>
+
+<pre><code>scrapy crawl dhakatribune -a start_page=0 -a end_page=10
+</code></pre>
+
+<h4>
 <a id="crawling-with-csvjson-output" class="anchor" href="#crawling-with-csvjson-output" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Crawling with CSV/JSON output</h4>
 
 <p>If you want to collect all crawled data in a csv or a json file you can run this command.</p>
@@ -117,12 +192,22 @@
 <pre><code>scrapy crawl dailystar -a start_date="01-01-2016" -a end_date="01-02-2016" -o output_file_name.json
 </code></pre>
 
+<p><strong>Dhaka Tribune [<code>json</code> output]</strong></p>
+
+<pre><code>scrapy crawl dhakatribune -a start_page=0 -a end_page=10 -o output_file_name.csv
+</code></pre>
+
+<p><strong>Dhaka Tribune [<code>csv</code> output]</strong></p>
+
+<pre><code>scrapy crawl dhakatribune -a start_page=0 -a end_page=10 -o output_file_name.json
+</code></pre>
+
 <p><strong>Prothom Alo [<code>csv</code> output]</strong></p>
 
 <pre><code>scrapy crawl prothomalo -a start_date="01-01-2016" -a end_date="01-02-2016" -o output_file_name.csv
 </code></pre>
 
-<p><strong>Daily Star [<code>csv</code> output]</strong></p>
+<p><strong>Prothom Alo [<code>json</code> output]</strong></p>
 
 <pre><code>scrapy crawl prothomalo -a start_date="01-01-2016" -a end_date="01-02-2016" -o output_file_name.json
 </code></pre>
@@ -131,16 +216,23 @@
 <a id="5-data-insertion-into-elasticsearch-and-kibana-visualization-instructions" class="anchor" href="#5-data-insertion-into-elasticsearch-and-kibana-visualization-instructions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>5. Data insertion into Elasticsearch and Kibana Visualization Instructions</h2>
 
 <h3>
-<a id="todo-1" class="anchor" href="#todo-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>[TODO]</h3>
+<a id="todo" class="anchor" href="#todo" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>[TODO]</h3>
+      </section>
 
-      <footer class="site-footer">
-        <span class="site-footer-owner"><a href="https://github.com/manashmndl/NewsCrawler">Newscrawler</a> is maintained by <a href="https://github.com/manashmndl">manashmndl</a>.</span>
-
-        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      <footer>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <p>this project by <a href="https://github.com/manashmndl">manashmndl</a> can be found on <a href="https://github.com/manashmndl/NewsCrawler">GitHub</a></p>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+        <p>Generated with <a href="https://pages.github.com">GitHub Pages</a> using Merlot</p>
+        <span class="octocat"></span>
       </footer>
 
-    </section>
+    </div>
 
-  
+    
   </body>
 </html>

@@ -117,20 +117,21 @@ scrapy crawl dailystar -a start_date="01-01-2016" -a end_date="01-02-2016" -o ou
 scrapy crawl dhakatribune -a start_page=0 -a end_page=10 -o output_file_name.csv
 ```
 
+**Dhaka Tribune [`csv` output]**
+```
+scrapy crawl dhakatribune -a start_page=0 -a end_page=10 -o output_file_name.json
+```
+
 **Prothom Alo [`csv` output]**
 ```
 scrapy crawl prothomalo -a start_date="01-01-2016" -a end_date="01-02-2016" -o output_file_name.csv
 ```
 
-**Daily Star [`csv` output]**
+**Prothom Alo [`json` output]**
 ```
 scrapy crawl prothomalo -a start_date="01-01-2016" -a end_date="01-02-2016" -o output_file_name.json
 ```
 
-**Dhaka Tribune [`csv` output]**
-```
-scrapy crawl dhakatribune -a start_page=0 -a end_page=10 -o output_file_name.json
-```
 
 ## 5. Data insertion into Elasticsearch and Kibana Visualization Instructions
 

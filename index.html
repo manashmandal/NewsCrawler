@@ -1,61 +1,46 @@
 <!DOCTYPE html>
 <html>
+
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=640">
+    <meta name="description" content="Newscrawler : News crawler">
 
-    <link rel="stylesheet" href="stylesheets/core.css" media="screen">
-    <link rel="stylesheet" href="stylesheets/mobile.css" media="handheld, only screen and (max-device-width:640px)">
-    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
-    <script type="text/javascript" src="javascripts/modernizr.js"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script type="text/javascript" src="javascripts/headsmart.min.js"></script>
-    <script type="text/javascript">
-      $(document).ready(function () {
-        $('#main_content').headsmart()
-      })
-    </script>
-    <title>Newscrawler by manashmndl</title>
+    <title>Newscrawler</title>
   </head>
 
   <body>
-    <a id="forkme_banner" href="https://github.com/manashmndl/NewsCrawler">View on GitHub</a>
-    <div class="shell">
 
-      <header>
-        <span class="ribbon-outer">
-          <span class="ribbon-inner">
-            <h1>Newscrawler</h1>
-            <h2>News crawler</h2>
-          </span>
-          <span class="left-tail"></span>
-          <span class="right-tail"></span>
-        </span>
-      </header>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/manashmndl/NewsCrawler">View on GitHub</a>
 
-      <section id="downloads">
-        <span class="inner">
-          <a href="https://github.com/manashmndl/NewsCrawler/archive/spider_only.zip" class="zip"><em>download</em> .ZIP</a><a href="https://github.com/manashmndl/NewsCrawler/tarball/master" class="tgz"><em>download</em> .TGZ</a>
-        </span>
-      </section>
+          <h1 id="project_title">Newscrawler</h1>
+          <h2 id="project_tagline">News crawler</h2>
 
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/manashmndl/NewsCrawler/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/manashmndl/NewsCrawler/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
 
-      <span class="banner-fix"></span>
-
-
-      <section id="main_content">
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
         <h1>
 <a id="bangladeshi-online-newspaper-crawler" class="anchor" href="#bangladeshi-online-newspaper-crawler" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Bangladeshi Online Newspaper Crawler</h1>
 
 <h2>
-<a id="currently-working-on" class="anchor" href="#currently-working-on" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Currently working on:</h2>
+<a id="done" class="anchor" href="#done" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Done</h2>
 
 <ul>
 <li><a href="http://en.prothom-alo.com"><del>en.prothom-alo.com</del></a></li>
 <li><a href="http://www.thedailystar.net"><del>thedailystar.net</del></a></li>
-<li><a href="http://archive.dhakatribune.com/archive">dhakatribune.com</a></li>
+<li><a href="http://archive.dhakatribune.com/archive"><del>dhakatribune.com</del></a></li>
 </ul>
 
 <h1>
@@ -192,12 +177,12 @@ STANFORD_CLASSIFIER_PATH = 'C:\StanfordParser\stanford-ner-2015-12-09\classifier
 <pre><code>scrapy crawl dailystar -a start_date="01-01-2016" -a end_date="01-02-2016" -o output_file_name.json
 </code></pre>
 
-<p><strong>Dhaka Tribune [<code>json</code> output]</strong></p>
+<p><strong>Dhaka Tribune [<code>csv</code> output]</strong></p>
 
 <pre><code>scrapy crawl dhakatribune -a start_page=0 -a end_page=10 -o output_file_name.csv
 </code></pre>
 
-<p><strong>Dhaka Tribune [<code>csv</code> output]</strong></p>
+<p><strong>Dhaka Tribune [<code>json</code> output]</strong></p>
 
 <pre><code>scrapy crawl dhakatribune -a start_page=0 -a end_page=10 -o output_file_name.json
 </code></pre>
@@ -215,24 +200,109 @@ STANFORD_CLASSIFIER_PATH = 'C:\StanfordParser\stanford-ner-2015-12-09\classifier
 <h2>
 <a id="5-data-insertion-into-elasticsearch-and-kibana-visualization-instructions" class="anchor" href="#5-data-insertion-into-elasticsearch-and-kibana-visualization-instructions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>5. Data insertion into Elasticsearch and Kibana Visualization Instructions</h2>
 
+<ul>
+<li>Download and extract Kibana and Elasticsearch</li>
+</ul>
+
 <h3>
-<a id="todo" class="anchor" href="#todo" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>[TODO]</h3>
+<a id="starting-mongodb-service" class="anchor" href="#starting-mongodb-service" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Starting MongoDB Service</h3>
+
+<ul>
+<li>Open CMD/Terminal then type the following command </li>
+</ul>
+
+<pre><code>mongod 
+</code></pre>
+
+<p>It should give the following output </p>
+
+<pre><code>2016-12-03T03:00:38.986+0600 I CONTROL  [initandlisten] MongoDB starting : pid=7204 port=27017 dbpath=C:\data\db\ 64-bit host=DESKTOP-4PR51E6
+2016-12-03T03:00:38.986+0600 I CONTROL  [initandlisten] targetMinOS: Windows 7/Windows Server 2008 R2
+2016-12-03T03:00:38.987+0600 I CONTROL  [initandlisten] db version v3.2.7
+.............
+.............
+2016-12-03T03:00:39.543+0600 I NETWORK  [HostnameCanonicalizationWorker] Starting hostname canonicalization worker
+2016-12-03T03:00:39.543+0600 I FTDC     [initandlisten] Initializing full-time diagnostic data capture with directory 'C:/data/db/diagnostic.data'
+2016-12-03T03:00:39.558+0600 I NETWORK  [initandlisten] waiting for connections on port 27017
+</code></pre>
+
+<p>Now you're all set to use the MongoDB service! </p>
+
+<h3>
+<a id="mongodb-troubleshooting" class="anchor" href="#mongodb-troubleshooting" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>MongoDB Troubleshooting</h3>
+
+<ul>
+<li>Couldn't find the path </li>
+</ul>
+
+<p>Add the <code>MongoDB\Server\3.2\bin</code> folder to your system path and then try again.</p>
+
+<ul>
+<li>
+<code>Data directory C:\data\db\ not found., terminating</code> </li>
+</ul>
+
+<p>Quite simple, all you need to do is to create a <code>db</code> folder there and you're good to go.</p>
+
+<h3>
+<a id="starting-elasticsearch-server" class="anchor" href="#starting-elasticsearch-server" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Starting Elasticsearch Server</h3>
+
+<p>Go to <code>elasticsearch-5.0.0\bin</code> folder then run the program <code>elasticsearch.bat</code> on windows. </p>
+
+<h3>
+<a id="starting-kibana-server" class="anchor" href="#starting-kibana-server" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Starting Kibana Server</h3>
+
+<p>Go to <code>kibana-5.0.0-windows-x86\bin</code> folder and run the program <code>kibana.bat</code> on windows.</p>
+
+<blockquote>
+<p>All of your local server and services should be working properly.
+Start crawling using the scrapy crawl command and the data will be automatically inserted to <code>mongo database</code>, <code>elasticsearch</code>, and you can get the output as either <code>csv</code> or <code>json</code> format.
+You must start <code>elasticsearch</code> before <code>kibana</code></p>
+</blockquote>
+
+<h3>
+<a id="configuring-kibana-for-data-acquisition-and-visualization" class="anchor" href="#configuring-kibana-for-data-acquisition-and-visualization" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Configuring Kibana for data acquisition and Visualization</h3>
+
+<p>Kibana server will listen to <code>localhost:5601</code> by default. So open the url in your browser. </p>
+
+<ul>
+<li>Go to <code>Management</code>
+</li>
+</ul>
+
+<p><img src="https://github.com/manashmndl/NewsCrawler/blob/master/screenshots/doc1.png?raw=true" alt="management"></p>
+
+<ul>
+<li>Click on <code>Index Patterns</code> and then <code>Add New</code>
+</li>
+</ul>
+
+<p><img src="https://github.com/manashmndl/NewsCrawler/blob/master/screenshots/doc2.png?raw=true" alt="indexpattern"></p>
+
+<ul>
+<li>Remove tick from <code>Index contains time-based events</code> and  write <code>news*</code> on the <strong>Index name or pattern</strong> text input. Then click <code>Create</code>
+</li>
+</ul>
+
+<p><img src="https://github.com/manashmndl/NewsCrawler/blob/master/screenshots/doc3.png?raw=true" alt="index"></p>
+
+<ul>
+<li>Then go to <code>Discover</code> and select <code>news*</code> index </li>
+</ul>
+
+<p><img src="https://github.com/manashmndl/NewsCrawler/blob/master/screenshots/doc4.gif?raw=true" alt="selection"></p>
       </section>
+    </div>
 
-      <footer>
-        <span class="ribbon-outer">
-          <span class="ribbon-inner">
-            <p>this project by <a href="https://github.com/manashmndl">manashmndl</a> can be found on <a href="https://github.com/manashmndl/NewsCrawler">GitHub</a></p>
-          </span>
-          <span class="left-tail"></span>
-          <span class="right-tail"></span>
-        </span>
-        <p>Generated with <a href="https://pages.github.com">GitHub Pages</a> using Merlot</p>
-        <span class="octocat"></span>
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Newscrawler maintained by <a href="https://github.com/manashmndl">manashmndl</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
       </footer>
-
     </div>
 
     
+
   </body>
 </html>

@@ -8,7 +8,7 @@ from newspaper import Article
 from NewsCrawler.Helpers.CustomNERTagger import Tagger
 from NewsCrawler.Helpers.date_helper import increase_day_by_one, DATETIME_FORMAT, dateobject_to_split_date
 from NewsCrawler.credentials_and_configs.stanford_ner_path import STANFORD_CLASSIFIER_PATH, STANFORD_NER_PATH
-
+from NewsCrawler.Helpers.image_downloader import download_multiple_image
 
 from scrapy.exceptions import CloseSpider
 
@@ -109,6 +109,10 @@ class DailyStarSpider(scrapy.Spider):
         # Getting the image source and captions
         news_item['images'] = response.xpath("//div[@class='caption']/../img/@src").extract()
         news_item['image_captions'] = response.xpath("//div[@class='caption']/text()").extract()
+
+        # If there's image download it 
+        if (len(news_item['images']) > 0):
+            download_multiple_image(news_item)
 
         # Get the breadcrumb
         news_item['breadcrumb'] = response.xpath("//div[@class='breadcrumb']//span[@itemprop='name']/text()").extract()

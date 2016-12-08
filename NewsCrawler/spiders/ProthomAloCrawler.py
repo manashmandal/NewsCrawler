@@ -4,17 +4,17 @@ import datetime
 
 from NewsCrawler.items import ProthomAloItem
 from newspaper import Article
-
 from NewsCrawler.Helpers.CustomNERTagger import Tagger
+from NewsCrawler.Helpers.image_downloader import download_image
 from NewsCrawler.credentials_and_configs.stanford_ner_path import STANFORD_CLASSIFIER_PATH, STANFORD_NER_PATH
-
 from NewsCrawler.Helpers.date_helper import dateobject_to_split_date, DATETIME_FORMAT, increase_day_by_one
-
 from scrapy.exceptions import CloseSpider
-
 from elasticsearch import Elasticsearch
 from pymongo import MongoClient
+
+
 es = Elasticsearch()
+
 
 class ProthomAloSpider(scrapy.Spider):
     name = 'prothomalo'
@@ -101,6 +101,10 @@ class ProthomAloSpider(scrapy.Spider):
         # Currently detects one image
         news_item['images'] = self.get_image_url(response.xpath("//img/@src").extract())
 
+        # If image exists, download it
+        if news_item['images'] != None:
+            download_image(news_item)
+
         # Currently gets one caption
         news_item['image_captions'] = response.xpath("//div[@itemprop='articleBody']//span/text()").extract_first()
 
@@ -147,7 +151,7 @@ class ProthomAloSpider(scrapy.Spider):
         news_item['sentiment'] = self.tagger.get_indico_sentiment(news_item['article'])
 
         doc = {
-            "id" : news_item['_id'],
+            # "id" : news_item['_id'],
             "news_url" : news_item['url'],
             "newspaper" : news_item['newspaper_name'],
             "reporter" : news_item['reporter'],
@@ -185,14 +189,15 @@ class ProthomAloSpider(scrapy.Spider):
             "generated_keywords" : news_item['generated_keywords'],
             "generated_summary" : news_item['generated_summary'],
             "crawled_time" : datetime.datetime.now().strftime(DATETIME_FORMAT),
-            "@timestamp" : datetime.datetime.now().strftime(DATETIME_FORMAT),
+            "date": datetime.datetime.now()
+            # "_timestamp" : datetime.datetime.now().strftime(DATETIME_FORMAT),
         }
 
         # Inserting data to Elasticsearch
         res = es.index(index="newspaper_index", doc_type="news", id=self.id, body=doc)
         # Inserting data into mongodb
         self.db.prothomalo_db.insert_one(doc)
-
+        self.logger.info(res)
         # Output can also be saved as csv/json
         yield doc
     

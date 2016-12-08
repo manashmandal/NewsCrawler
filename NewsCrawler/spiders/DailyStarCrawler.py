@@ -159,7 +159,7 @@ class DailyStarSpider(scrapy.Spider):
         news_item['crawl_time'] = datetime.datetime.now().strftime(DATETIME_FORMAT)
 
         doc = {
-            "id" : news_item['_id'],
+            # "id" : news_item['_id'],
             "news_url" : news_item['url'],
             "newspaper" : news_item['newspaper_name'],
             "reporter" : news_item['reporter'],
@@ -196,7 +196,8 @@ class DailyStarSpider(scrapy.Spider):
             "generated_keywords" : news_item['generated_keywords'],
             "generated_summary" : news_item['generated_summary'],
             "crawled_time" : news_item['crawl_time'],
-            "@timestamp" : news_item['crawl_time'],
+            # "_timestamp" : news_item['crawl_time'],
+            "date": datetime.datetime.now()
         }
 
         #inserting data into Elasticsearch [UNCOMMENT WHEN USING ELASTICSEARCH]

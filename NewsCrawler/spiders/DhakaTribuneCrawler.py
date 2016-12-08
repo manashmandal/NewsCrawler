@@ -10,17 +10,19 @@ from NewsCrawler.Helpers.date_helper import increase_day_by_one, DATETIME_FORMAT
 from NewsCrawler.credentials_and_configs.stanford_ner_path import STANFORD_CLASSIFIER_PATH, STANFORD_NER_PATH
 
 from scrapy.exceptions import CloseSpider
+from NewsCrawler.Helpers.image_downloader import download_image
 
 from elasticsearch import Elasticsearch
 from pymongo import MongoClient
 
 es = Elasticsearch()
-
+import wget
 
 class DhakaTribuneSpider(scrapy.Spider):
 	name = 'dhakatribune'
 
 	def __init__(self, start_page=0, end_page=2):
+		self.parsed_news_items = []
 		self.start_page = int(start_page)
 		self.end_page = int(end_page)
 		self.tagger = Tagger(classifier_path=STANFORD_CLASSIFIER_PATH, ner_path=STANFORD_NER_PATH)
@@ -64,6 +66,8 @@ class DhakaTribuneSpider(scrapy.Spider):
 			request = scrapy.Request(news_item['url'], callback=self.parseNews)
 			request.meta['news_item'] = news_item
 
+			self.parsed_news_items.append(news_item)
+
 			yield request
 
 		# increase page count by one
@@ -94,8 +98,13 @@ class DhakaTribuneSpider(scrapy.Spider):
 		# Get image urls with captions
 		news_item['images'] = response.xpath("//ul[@class='singleslider']/li/img/@src").extract_first()
 		
-		# If there is an image, try to get the other attributes
+		# If there is an image, try to get the other attributes, and download image
 		if news_item['images'] != None:
+			#Downloading the image
+			self.logger.info("DOWNLOADING IMAGE")
+			self.logger.info("URL " + news_item['images'])
+			download_image(news_item)
+
 			news_item['image_captions'] = ''.join([text.strip() for text in response.xpath("//ul[@class='singleslider']/li/text()").extract()])
 			credit_text = response.xpath("//ul[@class='singleslider']/li/span/text()").extract_first()
 			if credit_text != None:
@@ -137,11 +146,40 @@ class DhakaTribuneSpider(scrapy.Spider):
 		except:
 			news_item['sentiment'] = None
 
-		self.tag_it(news_item)
+		# self.tag_it(news_item)
+		# #Applying NLP from newspaper package
+		article = Article(url=news_item['url'])
+		article.download()
+		article.parse()
+		article.nlp()
+
+		news_item['generated_summary'] = article.summary
+		news_item['generated_keywords'] = article.keywords
+
+		# Tagging the article
+		try:
+			self.tagger.entity_group(news_item['article'])
+		except:
+			self.logger.info("NER CRASHED")
+
+		news_item['ner_person'] = self.tagger.PERSON
+		news_item['ner_organization'] = self.tagger.ORGANIZATION
+		news_item['ner_time'] = self.tagger.TIME
+		news_item['ner_percent'] = self.tagger.PERCENT
+		news_item['ner_money'] = self.tagger.MONEY
+		news_item['ner_location'] = self.tagger.LOCATION
+
+		# Contains all occurances
+		news_item['ner_list_person'] = self.tagger.LIST_PERSON
+		news_item['ner_list_organization'] = self.tagger.LIST_ORGANIZATION
+		news_item['ner_list_time'] = self.tagger.LIST_TIME
+		news_item['ner_list_percent'] = self.tagger.LIST_PERCENT
+		news_item['ner_list_money'] = self.tagger.LIST_MONEY
+		news_item['ner_list_location'] = self.tagger.LIST_LOCATION
 
 		# Creating the doc
 		doc = {
-			"id": news_item['_id'],
+			# "id": news_item['_id'],
 			"news_url" : news_item['url'],
 			"newspaper": news_item['newspaper_name'],
 			"reporter" : news_item['reporter'],
@@ -178,7 +216,8 @@ class DhakaTribuneSpider(scrapy.Spider):
 			"generated_keywords" : news_item['generated_keywords'],
 			"generated_summary" : news_item['generated_summary'],
 			"crawled_time" : news_item['crawl_time'],
-			"@timestamp" : news_item['crawl_time'],
+			# "_timestamp" : news_item['crawl_time'],
+			"date": datetime.datetime.now()
 		}
 
 		#Inserting news into eleasticsearch
@@ -187,7 +226,8 @@ class DhakaTribuneSpider(scrapy.Spider):
 		# self.debug(news_item)
 
 		yield doc
-
+	
+	## For debugging flexibility
 	def tag_it(self, news_item):
 		# #Applying NLP from newspaper package
 		article = Article(url=news_item['url'])

@@ -30,8 +30,8 @@ def download_image(news_item):
 
 
 def download_multiple_image(news_item):
+    moveto = DOWNLOAD_PATH_PREFIX + news_item['newspaper_name'] + '//' + str(news_item['_id'])
     for url in news_item['images']:
-        moveto = DOWNLOAD_PATH_PREFIX + news_item['newspaper_name'] + '//' + str(news_item['_id'])
         r = requests.get(url, stream=True)
         filename = url.split('/')[-1]
         filename = filename.split('?')[0]

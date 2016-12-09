@@ -163,7 +163,7 @@ class DailyStarSpider(scrapy.Spider):
         news_item['crawl_time'] = datetime.datetime.now().strftime(DATETIME_FORMAT)
 
         doc = {
-            # "id" : news_item['_id'],
+            "id" : news_item['_id'],
             "news_url" : news_item['url'],
             "newspaper" : news_item['newspaper_name'],
             "reporter" : news_item['reporter'],
@@ -205,7 +205,7 @@ class DailyStarSpider(scrapy.Spider):
         }
 
         #inserting data into Elasticsearch [UNCOMMENT WHEN USING ELASTICSEARCH]
-        res = es.index(index="newspaper_index", doc_type='news', id=self.id, body=doc)
+        res = es.index(index="newspaper_index", doc_type='news', body=doc)
         #Inserting data into mongodb 
         self.db.dailystar_db.insert_one(doc)
         # Data can be collected as csv/json also 

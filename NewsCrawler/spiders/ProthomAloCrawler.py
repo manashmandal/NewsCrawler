@@ -151,7 +151,7 @@ class ProthomAloSpider(scrapy.Spider):
         news_item['sentiment'] = self.tagger.get_indico_sentiment(news_item['article'])
 
         doc = {
-            # "id" : news_item['_id'],
+            "id" : news_item['_id'],
             "news_url" : news_item['url'],
             "newspaper" : news_item['newspaper_name'],
             "reporter" : news_item['reporter'],
@@ -194,7 +194,7 @@ class ProthomAloSpider(scrapy.Spider):
         }
 
         # Inserting data to Elasticsearch
-        res = es.index(index="newspaper_index", doc_type="news", id=self.id, body=doc)
+        res = es.index(index="newspaper_index", doc_type="news", body=doc)
         # Inserting data into mongodb
         self.db.prothomalo_db.insert_one(doc)
         self.logger.info(res)

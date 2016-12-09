@@ -1,6 +1,7 @@
 import scrapy
 import logging
 import datetime
+import re
 
 from NewsCrawler.items import DhakaTribuneItem
 from newspaper import Article
@@ -116,6 +117,10 @@ class DhakaTribuneSpider(scrapy.Spider):
 		# Getting the Article
 		news_item['article'] = ''.join([text.strip() for text in response.xpath("//div[contains(@class,'article-content')]//p/text()").extract()])
 
+		# Add a space after punctuation [This is required, otherwise tagging will combine two Named Entity into one]
+		re.sub(r'\.(?! )', '. ', re.sub(r' +', ' ', news_item['article']))
+
+		# checking if reporter information is available or not
 		reporter_info_available = True if len(response.xpath("//div[@class='author-info']")) > 0 else False
 
 		if reporter_info_available == False:
@@ -179,7 +184,7 @@ class DhakaTribuneSpider(scrapy.Spider):
 
 		# Creating the doc
 		doc = {
-			# "id": news_item['_id'],
+			"id": news_item['_id'],
 			"news_url" : news_item['url'],
 			"newspaper": news_item['newspaper_name'],
 			"reporter" : news_item['reporter'],
@@ -221,7 +226,7 @@ class DhakaTribuneSpider(scrapy.Spider):
 		}
 
 		#Inserting news into eleasticsearch
-		res = es.index(index="newspaper_index", doc_type="news", id=self.id, body=doc)
+		res = es.index(index="newspaper_index", doc_type="news", body=doc)
 		self.db.dhakatribune_db.insert_one(doc)
 		# self.debug(news_item)
 

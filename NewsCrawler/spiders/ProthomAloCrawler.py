@@ -112,6 +112,9 @@ class ProthomAloSpider(scrapy.Spider):
         paragraphs = response.xpath("//div[@itemprop='articleBody']//p/text()").extract()
         news_item['article'] = "".join([para.strip() for para in paragraphs])
 
+        # Add a space after punctuation [This is required, otherwise tagging will combine two Named Entity into one]
+		re.sub(r'\.(?! )', '. ', re.sub(r' +', ' ', news_item['article']))
+
         # Getting the breadcrumb
         news_item['breadcrumb'] = response.xpath("//div[@class='breadcrumb']/ul/li/a/strong/text()").extract()
 

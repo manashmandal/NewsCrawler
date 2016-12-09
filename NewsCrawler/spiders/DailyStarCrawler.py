@@ -98,6 +98,9 @@ class DailyStarSpider(scrapy.Spider):
         paragraphs = response.xpath("//div[@class='field-body view-mode-teaser']//p/text()").extract()
         news_item['article'] = ''.join([para.strip() for para in paragraphs])
 
+        # Add a space after punctuation [This is required, otherwise tagging will combine two Named Entity into one]
+		re.sub(r'\.(?! )', '. ', re.sub(r' +', ' ', news_item['article']))
+
         # Getting bottom tag line
         news_item['bottom_tag_line'] = response.xpath("//h2[@class='h5 margin-bottom-zero']/em/text()").extract_first()
         # Getting top tag line

@@ -1,6 +1,7 @@
 import scrapy
 import logging
 import datetime
+import re
 
 from NewsCrawler.items import ProthomAloItem
 from newspaper import Article
@@ -17,7 +18,7 @@ es = Elasticsearch()
 
 
 class ProthomAloSpider(scrapy.Spider):
-    name = 'prothomalo'
+    name="prothomalo"
 
     def __init__(self, start_date="01-07-2014", end_date="02-07-2014", delimiter='-'):
         self.start_day, self.start_month, self.start_year = dateobject_to_split_date(start_date, delimiter=delimiter)
@@ -38,7 +39,7 @@ class ProthomAloSpider(scrapy.Spider):
 
         self.id = 0
         client = MongoClient()
-        self.db = client.prothomalo_db
+        self.db = client.news_db
 
         yield scrapy.Request(self.url, self.parse)
     
@@ -113,7 +114,7 @@ class ProthomAloSpider(scrapy.Spider):
         news_item['article'] = "".join([para.strip() for para in paragraphs])
 
         # Add a space after punctuation [This is required, otherwise tagging will combine two Named Entity into one]
-		re.sub(r'\.(?! )', '. ', re.sub(r' +', ' ', news_item['article']))
+	re.sub(r'\.(?! )', '. ', re.sub(r' +', ' ', news_item['article']))
 
         # Getting the breadcrumb
         news_item['breadcrumb'] = response.xpath("//div[@class='breadcrumb']/ul/li/a/strong/text()").extract()
@@ -199,7 +200,7 @@ class ProthomAloSpider(scrapy.Spider):
         # Inserting data to Elasticsearch
         res = es.index(index="newspaper_index", doc_type="news", body=doc)
         # Inserting data into mongodb
-        self.db.prothomalo_db.insert_one(doc)
+        self.db.news_db.insert_one(doc)
         self.logger.info(res)
         # Output can also be saved as csv/json
         yield doc

@@ -33,7 +33,6 @@ class DailyStarItem(Item):
     ml_tags = Field()
     sentiment = Field()
 
-
     # NER tags [only unique values]
     ner_person = Field()
     ner_money = Field()
@@ -115,7 +114,6 @@ class DhakaTribuneItem(Item):
     images_credit = Field()
     about_reporter = Field()
     crawl_time = Field()
-
 
     # NER tags [only unique values]
     ner_person = Field()

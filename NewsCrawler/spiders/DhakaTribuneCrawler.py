@@ -22,17 +22,23 @@ import wget
 class DhakaTribuneSpider(scrapy.Spider):
 	name = 'dhakatribune'
 
-	def __init__(self, start_page=0, end_page=2):
+	def __init__(self, start_page=0, end_page=3):
+		self.newspaper_id = 'dt' # For Acronym for dhakatribune
 		self.parsed_news_items = []
 		self.start_page = int(start_page)
 		self.end_page = int(end_page)
 		self.tagger = Tagger(classifier_path=STANFORD_CLASSIFIER_PATH, ner_path=STANFORD_NER_PATH)
-		client = MongoClient()
-		# Create a dhakatribune_db database using the MongoDB Console
-		self.db = client.dhakatribune_db
+		
 
 	def start_requests(self):
+		client = MongoClient()
+		# Create a dhakatribune_db database using the MongoDB Console
+		self.db = client.news_db
+
+		self.logger.info("STARTING REQUESTS")
+
 		self.begin_page = str(self.start_page)
+
 
 		# Removing the data when beginning crawling
 		# self.db.news_db.delete_many({})
@@ -184,7 +190,7 @@ class DhakaTribuneSpider(scrapy.Spider):
 
 		# Creating the doc
 		doc = {
-			"id": news_item['_id'],
+			"id": self.newspaper_id + str(news_item['_id']),
 			"news_url" : news_item['url'],
 			"newspaper": news_item['newspaper_name'],
 			"reporter" : news_item['reporter'],
@@ -227,7 +233,7 @@ class DhakaTribuneSpider(scrapy.Spider):
 
 		#Inserting news into eleasticsearch
 		res = es.index(index="newspaper_index", doc_type="news", body=doc)
-		self.db.dhakatribune_db.insert_one(doc)
+		self.db.news_db.insert_one(doc)
 		# self.debug(news_item)
 
 		yield doc

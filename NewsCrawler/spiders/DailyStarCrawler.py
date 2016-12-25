@@ -2,6 +2,7 @@ import scrapy
 import logging
 import datetime
 import re
+from dateutil import parser
 
 from NewsCrawler.items import DailyStarItem
 from newspaper import Article
@@ -185,7 +186,7 @@ class DailyStarSpider(scrapy.Spider):
             "newspaper": news_item['newspaper_name'],
             "reporter": news_item['reporter'],
             "about_reporter": None,
-            "date_published": news_item['published_date'],
+            "date_published": parser.parse(news_item['published_date']),
             "title": news_item['title'],
             "content": news_item['article'],
             "top_tagline": news_item['top_tag_line'],
@@ -216,7 +217,7 @@ class DailyStarSpider(scrapy.Spider):
 
             "generated_keywords": news_item['generated_keywords'],
             "generated_summary": news_item['generated_summary'],
-            "date_crawled": news_item['crawl_time'],
+            "date_crawled": datetime.datetime.now(),
             # "_timestamp" : news_item['crawl_time'],
             "date": datetime.datetime.now()
         }

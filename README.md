@@ -2,14 +2,11 @@
 
 ## Done
 
+# [Note: Dhaka Tribune website is under development so that crawler won't work] 
+
 * [~~en.prothom-alo.com~~](http://en.prothom-alo.com)
 * [~~thedailystar.net~~](http://www.thedailystar.net)
 * [~~dhakatribune.com~~](http://archive.dhakatribune.com/archive)
-
-# Requirements
-
-* Python 2k
-* Check `requirements.txt` file to find out about the dependencies
 
 # How to 
 
@@ -19,15 +16,108 @@
 ### 2. [Download Stanford NER](http://nlp.stanford.edu/software/CRF-NER.shtml) and [configure it](https://blog.manash.me/configuring-stanford-parser-and-stanford-ner-tagger-with-nltk-in-python-on-windows-f685483c374a) 
 ### 3. [Download and configure Elasticsearch & Kibana](https://www.elastic.co/guide/index.html)
 
-## 1. Installing the dependencies
+# 1. Setting Up 
 
-Clone the repository, then at the root of the directory of the repo, open a command window/terminal and run this following command. Make sure you have `pip`.
+## 1 (a) If you use a linux distro, install these packages first 
+
+Using this command, 
+
+```bash
+sudo apt-get install build-essential autoconf libtool pkg-config python-opengl python-imaging python-pyrex python-pyside.qtopengl idle-python2.7 qt4-dev-tools qt4-designer libqtgui4 libqtcore4 libqt4-xml libqt4-test libqt4-script libqt4-network libqt4-dbus python-qt4 python-qt4-gl libgle3 python-dev
+
+sudo easy_install greenlet
+
+sudo easy_install gevent
+```
+
+## 1 (b) Cloning the repository and creating virtual environment
+
+#### Cloning
+
+**Open a `cmd` or `terminal` and enter the following command**
+
+```bash
+git clone -b spider_only https://github.com/manashmndl/NewsCrawler.git
+```
+
+After a successful clone this will be shown
 
 ```
+Cloning into 'NewsCrawler'...
+remote: Counting objects: 711, done.
+remote: Compressing objects: 100% (7/7), done.
+remote: Total 711 (delta 1), reused 0 (delta 0), pack-reused 704
+Receiving objects: 100% (711/711), 2.03 MiB | 78.00 KiB/s, done.
+Resolving deltas: 100% (376/376), done.
+Checking connectivity... done.
+```
+
+#### Virtual Environment Creation
+
+* Enter the directory using `cd` command,
+
+```bash
+cd NewsCrawler
+```
+
+* Create a virtual environment
+
+[I'm using `Python 2.7`, **not anaconda**]
+
+```bash
+virtualenv -p /usr/bin/python2.7 venv
+```
+
+Successful prompt, 
+
+```bash
+Running virtualenv with interpreter /usr/bin/python2.7
+New python executable in /home/<username>/Downloads/project/NewsCrawler/venv/bin/python2.7
+Also creating executable in /home/<username>/Downloads/project/NewsCrawler/venv/bin/python
+Installing setuptools, pip, wheel...done.
+```
+
+
+* Activate the environment
+
+```bash
+source venv/bin/activate
+```
+
+On successful execution, the environment will be visible
+
+```bash
+(venv) rubel@rubel-rig ~/Downloads/project/NewsCrawler $ 
+```
+
+
+
+## 1 (c) Installing Dependencies
+
+After activating the virtual environment, enter the following command to install all dependencies,
+
+```bash
 pip install -r requirements.txt
 ```
 
-## 2. Configuring API and StanfordNER Path
+
+## 1 (d) Checking if the spiders are ready or not
+
+Enter the following command,
+
+```bash
+scrapy list
+```
+
+If it echoes these two spiders then the spiders are ready to crawl! Turn on the `MongoDB, Elasticsearch & Kibana` Server and start crawling.
+
+```bash
+dailystar
+prothomalo
+```
+
+
+# 2. Configuring API and StanfordNER Path
 
 ### Indicoio API Configuration
 
@@ -48,7 +138,7 @@ STANFORD_NER_PATH = 'C:\StanfordParser\stanford-ner-2015-12-09\stanford-ner.jar'
 STANFORD_CLASSIFIER_PATH = 'C:\StanfordParser\stanford-ner-2015-12-09\classifiers\english.all.3class.distsim.crf.ser.gz' # Insert your path here
 ```
 
-## 3. Running the spiders
+# 3. Running the spiders
 
 Open a command `window / terminal` at the `root` of the folder. Run the following commands to start scraping.
 

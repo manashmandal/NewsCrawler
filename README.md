@@ -101,8 +101,18 @@ After activating the virtual environment, enter the following command to install
 pip install -r requirements.txt
 ```
 
+## 1 (d) Download NLTK Corpus
 
-## 1 (d) Checking if the spiders are ready or not
+Run python from the virtual environment and do the following:
+
+```python
+import nltk
+nltk.download()
+```
+Then from the menu download all the corpus used in the book
+
+
+## 1 (e) Checking if the spiders are ready or not
 
 Enter the following command,
 

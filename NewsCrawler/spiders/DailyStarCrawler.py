@@ -8,7 +8,7 @@ from NewsCrawler.items import DailyStarItem
 from newspaper import Article
 
 from NewsCrawler.Helpers.CustomNERTagger import Tagger
-from NewsCrawler.Helpers.date_helper import increase_day_by_one, DATETIME_FORMAT, dateobject_to_split_date
+from NewsCrawler.Helpers.date_helper import increase_day_by_one, DATETIME_FORMAT, dateobject_to_split_date, date_to_string
 from NewsCrawler.credentials_and_configs.stanford_ner_path import STANFORD_CLASSIFIER_PATH, STANFORD_NER_PATH
 from NewsCrawler.Helpers.image_downloader import download_multiple_image
 
@@ -93,13 +93,28 @@ class DailyStarSpider(scrapy.Spider):
             self.next_page = self.baseurl + self.start_date.__str__()
             yield scrapy.Request(self.next_page, callback=self.parse)
 
+    # Formula for id = newspaper_name + published_date + crawled_date
+    def get_id(self, news_item, response):
+        news_item = response.meta['news_item']
+        # newspaper name
+        np = str(news_item['newspaper_name']).lower().replace(' ', '_')
+        # Date published
+        dp = date_to_string(news_item['published_date'], dateobject=False)
+        # Date crawled
+        dc = date_to_string(news_item['crawl_time'], dateobject=True)
+
+        id = np + '_' + dp + '_' + dc
+
+        news_item['_id'] = id
+        return news_item
+
     def parseNews(self, response):
 
         self.id += 1
 
         news_item = response.meta['news_item']
 
-        news_item['_id'] = self.id
+        
 
         # Getting the Article
         paragraphs = response.xpath(
@@ -125,10 +140,6 @@ class DailyStarSpider(scrapy.Spider):
             "//div[@class='caption']/../img/@src").extract()
         news_item['image_captions'] = response.xpath(
             "//div[@class='caption']/text()").extract()
-
-        # If there's image download it
-        if (len(news_item['images']) > 0):
-            download_multiple_image(news_item)
 
         # Get the breadcrumb
         news_item['breadcrumb'] = response.xpath(
@@ -179,6 +190,14 @@ class DailyStarSpider(scrapy.Spider):
 
         news_item['crawl_time'] = datetime.datetime.now(
         ).strftime(DATETIME_FORMAT)
+
+
+        news_item = self.get_id(news_item, response)
+        # news_item['_id'] = self.id
+
+        # If there's image download it
+        if (len(news_item['images']) > 0):
+            download_multiple_image(news_item)
 
         doc = {
             "id": news_item['_id'],

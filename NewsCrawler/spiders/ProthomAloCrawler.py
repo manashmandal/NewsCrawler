@@ -9,7 +9,7 @@ from newspaper import Article
 from NewsCrawler.Helpers.CustomNERTagger import Tagger
 from NewsCrawler.Helpers.image_downloader import download_image
 from NewsCrawler.credentials_and_configs.stanford_ner_path import STANFORD_CLASSIFIER_PATH, STANFORD_NER_PATH
-from NewsCrawler.Helpers.date_helper import dateobject_to_split_date, DATETIME_FORMAT, increase_day_by_one
+from NewsCrawler.Helpers.date_helper import dateobject_to_split_date, DATETIME_FORMAT, increase_day_by_one, date_to_string, d2s
 from scrapy.exceptions import CloseSpider
 from elasticsearch import Elasticsearch
 from pymongo import MongoClient
@@ -43,6 +43,21 @@ class ProthomAloSpider(scrapy.Spider):
         self.db = client.news_db
 
         yield scrapy.Request(self.url, self.parse)
+
+    # Formula for id = newspaper_name + published_date + crawled_date
+    def get_id(self, news_item, response):
+        news_item = response.meta['news_item']
+        # newspaper name
+        np = str(news_item['newspaper_name']).lower().replace(' ', '_')
+        # Date published
+        dp = d2s(parser.parse(news_item['published_date']))
+        # Date crawled
+        dc = d2s(news_item['crawl_time'], True)
+
+        id = np + '_' + dp + '_' + dc
+
+        news_item['_id'] = id
+        return news_item
     
     def parse(self, response):
         # Selecting the list of news
@@ -93,19 +108,15 @@ class ProthomAloSpider(scrapy.Spider):
     def parseNews(self, response):
         self.logger.info("TRYING")
         self.id += 1
-        
+
         # Retreiving news item
         news_item = response.meta['news_item']
 
-        # Inserting id
-        news_item['_id'] = self.id
+        # Crawl time
+        news_item['crawl_time'] = datetime.datetime.now()
 
         # Currently detects one image
         news_item['images'] = self.get_image_url(response.xpath("//img/@src").extract())
-
-        # If image exists, download it
-        if news_item['images'] != None:
-            download_image(news_item)
 
         # Currently gets one caption
         news_item['image_captions'] = response.xpath("//div[@itemprop='articleBody']//span/text()").extract_first()
@@ -115,7 +126,7 @@ class ProthomAloSpider(scrapy.Spider):
         news_item['article'] = "".join([para.strip() for para in paragraphs])
 
         # Add a space after punctuation [This is required, otherwise tagging will combine two Named Entity into one]
-	re.sub(r'\.(?! )', '. ', re.sub(r' +', ' ', news_item['article']))
+        re.sub(r'\.(?! )', '. ', re.sub(r' +', ' ', news_item['article']))
 
         # Getting the breadcrumb
         news_item['breadcrumb'] = response.xpath("//div[@class='breadcrumb']/ul/li/a/strong/text()").extract()
@@ -155,6 +166,12 @@ class ProthomAloSpider(scrapy.Spider):
 
         news_item['sentiment'] = self.tagger.get_indico_sentiment(news_item['article'])
 
+        news_item = self.get_id(news_item, response)
+
+        # If image exists, download it
+        if news_item['images'] != None:
+            download_image(news_item)
+
         doc = {
             "id" : news_item['_id'],
             "news_url" : news_item['url'],
@@ -162,7 +179,6 @@ class ProthomAloSpider(scrapy.Spider):
             "reporter" : news_item['reporter'],
             "about_reporter" : None,
             "date_published" : parser.parse(news_item['published_date']),
-            # "last_update" : news_item['published_date'],
             "title" : news_item['title'],
             "content" : news_item['article'],
             "top_tagline" : None,
@@ -193,7 +209,7 @@ class ProthomAloSpider(scrapy.Spider):
 
             "generated_keywords" : news_item['generated_keywords'],
             "generated_summary" : news_item['generated_summary'],
-            "time_crawled" : datetime.datetime.now(),
+            "date_crawled" : datetime.datetime.now(),
             "date": datetime.datetime.now()
             # "_timestamp" : datetime.datetime.now().strftime(DATETIME_FORMAT),
         }

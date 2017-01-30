@@ -10,8 +10,10 @@ DOWNLOAD_PATH_PREFIX = "..//downloaded_images//"
 
 def download_image(news_item):
     url = news_item['images']
-    moveto = DOWNLOAD_PATH_PREFIX + \
-        news_item['newspaper_name'] + '//' + str(news_item['_id'])
+    # moveto = DOWNLOAD_PATH_PREFIX + \
+        # news_item['newspaper_name'] + '//' + str(news_item['_id'])
+    moveto = DOWNLOAD_PATH_PREFIX + str(news_item['_id'])
+
     filename = url.split('/')[-1]
     # Check if needed
     filename = filename.split('?')[0]
@@ -32,8 +34,10 @@ def download_image(news_item):
 
 
 def download_multiple_image(news_item):
-    moveto = DOWNLOAD_PATH_PREFIX + \
-        news_item['newspaper_name'] + '//' + str(news_item['_id'])
+    # moveto = DOWNLOAD_PATH_PREFIX + \
+        # news_item['newspaper_name'] + '//' + str(news_item['_id'])
+    moveto = DOWNLOAD_PATH_PREFIX + news_item['_id']
+
     for url in news_item['images']:
         r = requests.get(url, stream=True)
         filename = url.split('/')[-1]

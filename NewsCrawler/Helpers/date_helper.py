@@ -18,18 +18,18 @@ def date_to_string(d, frmat = DATETIME_FORMAT, dateobject=False):
         return d.replace('-', '_').split()[0]
     else:
         year, month, day = dateobject_to_split_date(d)
-        _date = str(day) + '_' + str(month) + '_' + str(year)
+        _date = str(year) + '_' + str(month).zfill(2) + '_' + str(day).zfill(2)
         return _date
 
 def d2s(d, frmat=DATETIME_FORMAT):
     year, month, day = dateobject_to_split_date(d)
-    _date = str(day) + '_' + str(month) + '_' + str(year)
+    _date = str(year) + '_' + str(month).zfill(2) + '_' + str(day).zfill(2)
     return _date
 
 
 
 
-def dateobject_to_split_date(d, delimiter='-', reverse=False):
+def dateobject_to_split_date(d, delimiter='-', reverse=True):
     if reverse == True:
         year, month, day = [int(i) for i in d.__str__().split(' ')[
             0].split(delimiter)]

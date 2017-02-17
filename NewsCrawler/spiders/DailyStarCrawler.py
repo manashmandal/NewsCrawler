@@ -97,13 +97,22 @@ class DailyStarSpider(scrapy.Spider):
     def get_id(self, news_item, response):
         news_item = response.meta['news_item']
         # newspaper name
-        np = str(news_item['newspaper_name']).lower().replace(' ', '_')
+        nn = str(news_item['newspaper_name']).lower().replace(' ', '_')
         # Date published
         dp = date_to_string(news_item['published_date'], dateobject=False)
         # Date crawled
         dc = date_to_string(news_item['crawl_time'], dateobject=True)
 
-        id = np + '_' + dp + '_' + dc
+        published_day, published_month, published_year = dp.split('_')
+        crawled_day, crawled_month, crawled_year = dc.split('_')
+
+        dp = published_year + '_' + published_month + '_' + published_day
+
+        dc = crawled_year + '_' + crawled_month + '_' + crawled_day
+
+        id = nn + '_' + dp + '_' + dc
+
+        self.logger.info("ID: " + id)
 
         news_item['_id'] = id
         return news_item

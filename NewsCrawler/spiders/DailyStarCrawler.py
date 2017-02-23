@@ -110,7 +110,13 @@ class DailyStarSpider(scrapy.Spider):
 
         dc = crawled_year + '_' + crawled_month + '_' + crawled_day
 
-        id = nn + '_' + dp + '_' + dc
+        # id = nn + '_' + dp + '_' + dc
+
+        # Converting news title into snakecase
+        news_title = str(news_item['title'])[:15].lower().strip().encode('ascii', 'ignore')
+        news_title = ''.join(c for c in news_title if c.isalnum() or c is ' ').replace(' ', '_')
+
+        id = nn + '_' + dp + '_' + news_title
 
         self.logger.info("ID: " + id)
 
@@ -248,9 +254,7 @@ class DailyStarSpider(scrapy.Spider):
 
             "generated_keywords": news_item['generated_keywords'],
             "generated_summary": news_item['generated_summary'],
-            "date_crawled": datetime.datetime.now(),
-            # "_timestamp" : news_item['crawl_time'],
-            "date": datetime.datetime.now()
+            "date_crawled": datetime.datetime.now()
         }
 
         # inserting data into Elasticsearch [UNCOMMENT WHEN USING

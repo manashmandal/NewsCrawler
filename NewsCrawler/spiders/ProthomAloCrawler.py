@@ -209,9 +209,7 @@ class ProthomAloSpider(scrapy.Spider):
 
             "generated_keywords" : news_item['generated_keywords'],
             "generated_summary" : news_item['generated_summary'],
-            "date_crawled" : datetime.datetime.now(),
-            "date": datetime.datetime.now()
-            # "_timestamp" : datetime.datetime.now().strftime(DATETIME_FORMAT),
+            "date_crawled" : datetime.datetime.now()
         }
 
         # Inserting data to Elasticsearch

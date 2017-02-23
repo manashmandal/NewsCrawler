@@ -24,7 +24,7 @@ es = Elasticsearch()
 class DailyStarSpider(scrapy.Spider):
     name="dailystar"
 
-    def __init__(self, start_date='01-01-2016', end_date='02-01-2016', delimiter='-'):
+    def __init__(self, start_date, end_date, delimiter='-'):
         self.start_day, self.start_month, self.start_year = dateobject_to_split_date(
             start_date, delimiter=delimiter)  # [int(i) for i in start_date.split(delimiter)]
         self.end_day, self.end_month, self.end_year = dateobject_to_split_date(
@@ -41,7 +41,7 @@ class DailyStarSpider(scrapy.Spider):
         self.end_date = datetime.date(
             self.end_year, self.end_month, self.end_day)
 
-        self.url = 'http://www.thedailystar.net/newspaper?' + self.start_date.__str__()
+        self.url = 'http://www.thedailystar.net/newspaper?' + 'date=' + self.start_date.__str__()
 
         # Creating the Tagger object
         self.tagger = Tagger(
@@ -68,7 +68,7 @@ class DailyStarSpider(scrapy.Spider):
                 "../../../../../../../div[1]/h2/text()").extract_first()
             news_item['url'] = self.main_url + \
                 sel.xpath("a/@href").extract_first()
-            news_item['title'] = sel.xpath("a/text()").extract_first().strip()
+            #news_item['title'] = sel.xpath("a/text()").extract_first().strip()
 
             request = scrapy.Request(news_item['url'], callback=self.parseNews)
 
@@ -157,6 +157,9 @@ class DailyStarSpider(scrapy.Spider):
         # Get reporter
         news_item['reporter'] = response.xpath(
             "//div[@class='author-name margin-bottom-big']/span/a/text()").extract_first()
+
+        # Getting the title 
+        news_item = self.getTitle(news_item, response)
 
         # Get the summary and keywords using 'newspaper' package
         # [WARNING : This section slows down the overall scraping process]
@@ -265,4 +268,9 @@ class DailyStarSpider(scrapy.Spider):
             dt.split("+")[0], "%Y-%m-%dT%H:%M:%S")
         formatted_dt = converted_dt.strftime(DATETIME_FORMAT)
         news_item['published_date'] = formatted_dt
+        return news_item
+
+    def getTitle(self, news_item, response):
+        title = response.xpath("//h1/text()").extract_first().strip()
+        news_item['title'] = title
         return news_item

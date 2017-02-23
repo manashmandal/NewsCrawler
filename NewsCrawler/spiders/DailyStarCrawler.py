@@ -93,6 +93,20 @@ class DailyStarSpider(scrapy.Spider):
             self.next_page = self.baseurl + self.start_date.__str__()
             yield scrapy.Request(self.next_page, callback=self.parse)
 
+    # Returns snake_case string 
+    def format_string(self, s):
+        try:
+            s = str(s.lower()).encode('ascii', 'ignore')
+        except:
+            s = ''
+        # Remove all non-word characters (everything except numbers and letters)
+        s = re.sub(r"[^\w\s]", '', s)
+
+        # Replace all runs of whitespace with a single dash
+        s = re.sub(r"\s+", '_', s)
+
+        return s
+
     # Formula for id = newspaper_name + published_date + crawled_date
     def get_id(self, news_item, response):
         news_item = response.meta['news_item']
@@ -113,8 +127,7 @@ class DailyStarSpider(scrapy.Spider):
         # id = nn + '_' + dp + '_' + dc
 
         # Converting news title into snakecase
-        news_title = str(news_item['title']).lower().strip().encode('ascii', 'ignore').replace(' ', '_')
-        news_title = ''.join(c for c in news_title if c.isalnum() or c is '_')[:15]
+        news_title = self.format_string(news_item['title'])[:15]
 
         id = nn + '_' + dp + '_' + news_title
 
@@ -275,6 +288,9 @@ class DailyStarSpider(scrapy.Spider):
         return news_item
 
     def getTitle(self, news_item, response):
-        title = response.xpath("//h1/text()").extract_first().strip()
+        try:
+            title = response.xpath("//h1/text()").extract_first().strip()
+        except:
+            title = response.xpath("//h1/text()").extract_first()
         news_item['title'] = title
         return news_item

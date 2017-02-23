@@ -113,8 +113,8 @@ class DailyStarSpider(scrapy.Spider):
         # id = nn + '_' + dp + '_' + dc
 
         # Converting news title into snakecase
-        news_title = str(news_item['title'])[:15].lower().strip().encode('ascii', 'ignore')
-        news_title = ''.join(c for c in news_title if c.isalnum() or c is ' ').replace(' ', '_')
+        news_title = str(news_item['title']).lower().strip().encode('ascii', 'ignore').replace(' ', '_')
+        news_title = ''.join(c for c in news_title if c.isalnum() or c is '_')[:15]
 
         id = nn + '_' + dp + '_' + news_title
 

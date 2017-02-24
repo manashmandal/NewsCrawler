@@ -175,5 +175,8 @@ class Tagger:
         return tag_touple_list
 
     def get_indico_sentiment(self, text):
-        sentiment = indicoio.sentiment_hq(text)
-        return sentiment
+        ## For now we are not using up API limit
+        ## We will go through the sentiments as soon as
+        ## the crawl is completed
+        #sentiment = indicoio.sentiment_hq(text)
+        return None#sentiment

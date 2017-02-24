@@ -176,6 +176,4 @@ class Tagger:
 
     def get_indico_sentiment(self, text):
         sentiment = indicoio.sentiment_hq(text)
-        if sentiment >= 0.5:
-            return "Positive"
-        return "Negative"
+        return sentiment

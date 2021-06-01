@@ -38,6 +38,6 @@ service-identity==16.0.0
 six==1.10.0
 tldextract==1.5.1
 Twisted==16.6.0
-urllib3==1.20
+urllib3==1.26.5
 w3lib==1.16.0
 zope.interface==4.3.3
